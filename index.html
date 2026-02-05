@@ -203,15 +203,39 @@ a {
   display: inline-block;
 }
     .tip-joke{
-  margin-top: 10px;
-  font-style: italic;
-  opacity: .95;
-  transition: opacity .25s ease;
+  margin: 12px auto 0;
+  max-width: 860px;
+
+  font-style: normal;
+  font-weight: 900;
+  font-size: clamp(18px, 2.2vw, 26px);
+  line-height: 1.25;
+  letter-spacing: .2px;
+
+  color: rgba(255,255,255,.96);
+
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.18);
+  background: rgba(0,0,0,.22);
+  backdrop-filter: blur(10px);
+
+  box-shadow:
+    0 10px 26px rgba(0,0,0,.45),
+    0 0 0 1px rgba(255,255,255,.06) inset,
+    0 0 22px rgba(255,255,255,.10);
+
+  text-shadow:
+    0 2px 10px rgba(0,0,0,.55),
+    0 0 18px rgba(255,255,255,.14);
+
+  transition: opacity .25s ease, transform .25s ease, filter .25s ease;
 }
-.tip-joke.fadeout{ opacity: 0; }
-    @keyframes rainbowSpin {
-  0%   { transform: rotate(0deg);   }
-  100% { transform: rotate(360deg); }
+
+.tip-joke.fadeout{
+  opacity: 0;
+  transform: translateY(-4px) scale(.99);
+  filter: blur(1px);
 }
 
 @keyframes rainbowShift {
@@ -267,7 +291,7 @@ header, .wrap, footer{
     <p class="sub">
       Scan a code, send a tip, keep the music moving.
     </p>
-    <b><p id="tipJoke" class="sub tip-joke"></p></b>
+    <p id="tipJoke" class="sub tip-joke"></p>
   </header>
 
   <div class="wrap">
