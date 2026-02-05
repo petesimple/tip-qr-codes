@@ -202,6 +202,11 @@ a {
   padding: 6px 0;
   display: inline-block;
 }
+    .tip-joke{
+  margin-top: 10px;
+  font-style: italic;
+  opacity: .95;
+}
   </style>
 </head>
 <body>
@@ -211,6 +216,7 @@ a {
       Scan a code, send a tip, keep the music and pucks moving.
       More payment types can be added anytime.
     </p>
+    <p id="tipJoke" class="sub tip-joke"></p>
   </header>
 
   <div class="wrap">
@@ -250,6 +256,91 @@ a {
 
     const grid = document.getElementById("grid");
 
+function pick(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+
+function buildTipJoke(){
+  // 12 x 12 x 10 = 1440 combos, plus the "specials"
+  const openers = [
+    "Tip jar fact",
+    "Breaking news",
+    "Hot tip",
+    "Science update",
+    "Puck report",
+    "Band meeting minutes",
+    "Merch table memo",
+    "This just in",
+    "Official statement",
+    "Public service announcement",
+    "Weather forecast",
+    "Totally legal disclaimer"
+  ];
+
+  const middles = [
+    "this song runs on",
+    "this groove is powered by",
+    "these pucks are sponsored by",
+    "my strings are held together with",
+    "the drummer accepts payment in",
+    "the bassist demands tribute via",
+    "the amp gods require",
+    "the set list is fueled by",
+    "the encore is unlocked by",
+    "this vibe survives thanks to",
+    "the soundcheck is paid for with",
+    "my rent is gently encouraged by"
+  ];
+
+  const closers = [
+    "tips and positive energy.",
+    "tips only. energy optional.",
+    "tips. preferably the money kind.",
+    "tips. I promise to spend them irresponsibly on responsible things.",
+    "tips. I will not buy more pedals. (I will.)",
+    "tips. I will use them to keep the music loud and the pucks fast.",
+    "tips. it keeps this whole operation mostly upright.",
+    "tips. no refunds, only riffs.",
+    "tips. your generosity is my favorite instrument.",
+    "tips. scan now, regret nothing."
+  ];
+
+  // Optional: some hand-written ones mixed in (these are fun and feel “human”)
+  const specials = [
+    "If you tip, I will pretend my life is organized for 3 full seconds.",
+    "Tip jar challenge: donate one dollar per time you have said 'one more song.'",
+    "Warning: tipping may cause spontaneous dancing and better decision making.",
+    "This is a tip jar. Not a suggestion jar. Please do not tip me life advice.",
+    "Tips go directly to the 'keep doing this' fund. It is dangerously low.",
+    "Tip now and I will emotionally support your karaoke career.",
+    "If you do not tip, the puck gets it. The puck has expensive taste.",
+    "Tip jar is like air hockey: small nudges, big results.",
+    "Tip jar status: accepting money, compliments, and mildly heroic legends about me.",
+    "Every tip adds +1 to my luck stat for the rest of the night."
+  ];
+
+  // 30% specials, 70% generated
+  const useSpecial = Math.random() < 0.30;
+  return useSpecial ? pick(specials) : `${pick(openers)}: ${pick(middles)} ${pick(closers)}`;
+}
+
+function setTipJoke(){
+  const elJoke = document.getElementById("tipJoke");
+  if (!elJoke) return;
+
+  let joke = buildTipJoke();
+
+  // Avoid same joke twice in a row (simple localStorage guard)
+  try {
+    const last = localStorage.getItem("lastTipJoke");
+    if (last && last === joke) joke = buildTipJoke();
+    localStorage.setItem("lastTipJoke", joke);
+  } catch (e) {}
+
+  elJoke.textContent = joke;
+}
+
+// Run on load
+setTipJoke();
+    
     function el(tag, props = {}, children = []) {
       const node = document.createElement(tag);
       Object.entries(props).forEach(([k, v]) => {
