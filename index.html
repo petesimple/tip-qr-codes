@@ -209,6 +209,56 @@ a {
   transition: opacity .25s ease;
 }
 .tip-joke.fadeout{ opacity: 0; }
+    @keyframes rainbowSpin {
+  0%   { transform: rotate(0deg);   }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes rainbowShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* full-screen rainbow layer */
+body::before{
+  content:"";
+  position: fixed;
+  inset: -35%;                 /* oversized so rotation never shows edges */
+  z-index: 0;
+  pointer-events: none;
+
+  background:
+    conic-gradient(
+      from 0deg,
+      rgba(255, 0, 102, .22),
+      rgba(255, 153, 0, .18),
+      rgba(255, 255, 0, .16),
+      rgba(0, 255, 153, .18),
+      rgba(0, 204, 255, .20),
+      rgba(102, 0, 255, .20),
+      rgba(255, 0, 204, .20),
+      rgba(255, 0, 102, .22)
+    );
+
+  filter: blur(40px) saturate(160%);
+  opacity: .55;
+
+  animation:
+    rainbowSpin 36s linear infinite,
+    rainbowShift 18s ease-in-out infinite;
+}
+
+/* make sure your actual content sits above the rainbow layer */
+header, .wrap, footer{
+  position: relative;
+  z-index: 1;
+}
+
+/* optional: slightly strengthen card readability */
+.card{
+  backdrop-filter: blur(8px);
+}
   </style>
 </head>
 <body>
