@@ -206,7 +206,9 @@ a {
   margin-top: 10px;
   font-style: italic;
   opacity: .95;
+  transition: opacity .25s ease;
 }
+.tip-joke.fadeout{ opacity: 0; }
   </style>
 </head>
 <body>
@@ -259,34 +261,18 @@ a {
 function pick(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
 
 function buildTipJoke(){
-  // 12 x 12 x 10 = 1440 combos, plus the "specials"
+  // 12 x 12 x 10 = 1440 combos, plus specials
   const openers = [
-    "Tip jar fact",
-    "Breaking news",
-    "Hot tip",
-    "Science update",
-    "Puck report",
-    "Band meeting minutes",
-    "Merch table memo",
-    "This just in",
-    "Official statement",
-    "Public service announcement",
-    "Weather forecast",
-    "Totally legal disclaimer"
+    "Tip jar fact","Breaking news","Hot tip","Science update","Puck report",
+    "Band meeting minutes","Merch table memo","This just in","Official statement",
+    "Public service announcement","Weather forecast","Totally legal disclaimer"
   ];
 
   const middles = [
-    "this song runs on",
-    "this groove is powered by",
-    "these pucks are sponsored by",
-    "my strings are held together with",
-    "the drummer accepts payment in",
-    "the bassist demands tribute via",
-    "the amp gods require",
-    "the set list is fueled by",
-    "the encore is unlocked by",
-    "this vibe survives thanks to",
-    "the soundcheck is paid for with",
+    "this song runs on","this groove is powered by","these pucks are sponsored by",
+    "my strings are held together with","the drummer accepts payment in",
+    "the bassist demands tribute via","the amp gods require","the set list is fueled by",
+    "the encore is unlocked by","this vibe survives thanks to","the soundcheck is paid for with",
     "my rent is gently encouraged by"
   ];
 
@@ -303,7 +289,6 @@ function buildTipJoke(){
     "tips. scan now, regret nothing."
   ];
 
-  // Optional: some hand-written ones mixed in (these are fun and feel “human”)
   const specials = [
     "If you tip, I will pretend my life is organized for 3 full seconds.",
     "Tip jar challenge: donate one dollar per time you have said 'one more song.'",
@@ -317,29 +302,58 @@ function buildTipJoke(){
     "Every tip adds +1 to my luck stat for the rest of the night."
   ];
 
-  // 30% specials, 70% generated
   const useSpecial = Math.random() < 0.30;
-  return useSpecial ? pick(specials) : `${pick(openers)}: ${pick(middles)} ${pick(closers)}`;
+  return useSpecial
+    ? pick(specials)
+    : `${pick(openers)}: ${pick(middles)} ${pick(closers)}`;
 }
 
-function setTipJoke(){
+function nextJokeDifferentFrom(last){
+  // try a few times to avoid repeats
+  for (let i = 0; i < 8; i++){
+    const j = buildTipJoke();
+    if (j !== last) return j;
+  }
+  return buildTipJoke();
+}
+
+let jokeTimer = null;
+
+function setTipJoke({ animate = true } = {}){
   const elJoke = document.getElementById("tipJoke");
   if (!elJoke) return;
 
-  let joke = buildTipJoke();
+  let last = elJoke.textContent || "";
+  let joke = nextJokeDifferentFrom(last);
 
-  // Avoid same joke twice in a row (simple localStorage guard)
-  try {
-    const last = localStorage.getItem("lastTipJoke");
-    if (last && last === joke) joke = buildTipJoke();
-    localStorage.setItem("lastTipJoke", joke);
-  } catch (e) {}
+  // persist last joke (optional)
+  try { localStorage.setItem("lastTipJoke", joke); } catch (e) {}
 
-  elJoke.textContent = joke;
+  if (!animate){
+    elJoke.textContent = joke;
+    return;
+  }
+
+  elJoke.classList.add("fadeout");
+  setTimeout(() => {
+    elJoke.textContent = joke;
+    elJoke.classList.remove("fadeout");
+  }, 220);
+}
+
+function startJokeRotation(){
+  // set one immediately on load
+  setTipJoke({ animate: false });
+
+  // rotate every 20 seconds
+  if (jokeTimer) clearInterval(jokeTimer);
+  jokeTimer = setInterval(() => setTipJoke({ animate: true }), 20000);
 }
 
 // Run on load
-setTipJoke();
+startJokeRotation();
+
+
     
     function el(tag, props = {}, children = []) {
       const node = document.createElement(tag);
