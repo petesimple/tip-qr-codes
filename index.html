@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tip Pete - QR Codes</title>
+  <meta name="theme-color" content="#0b0b0f" />
+  <style>
+    :root{
+      --bg:#0b0b0f;
+      --panel:#141422;
+      --text:#f3f4ff;
+      --muted:#a7abcc;
+      --border:rgba(255,255,255,.10);
+      --shadow: 0 14px 40px rgba(0,0,0,.45);
+      --radius:18px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background: radial-gradient(900px 600px at 10% 0%, rgba(120,120,255,.10), transparent 60%),
+                  radial-gradient(900px 600px at 90% 10%, rgba(255,120,200,.08), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+    }
+    header{
+      padding: 28px 18px 10px;
+      text-align:center;
+    }
+    h1{
+      margin:0;
+      font-size: 28px;
+      letter-spacing:.3px;
+    }
+    .sub{
+      margin:10px auto 0;
+      max-width: 720px;
+      color:var(--muted);
+      line-height:1.45;
+      font-size:14px;
+    }
+    .wrap{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 18px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 16px;
+      position: relative;
+      overflow:hidden;
+    }
+    .card:before{
+      content:"";
+      position:absolute;
+      inset:-1px;
+      background: radial-gradient(600px 200px at 30% 0%, rgba(255,255,255,.06), transparent 60%);
+      pointer-events:none;
+    }
+    .row{
+      position:relative;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 10px;
+    }
+    .title{
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0;
+    }
+    .hint{
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+    .qr{
+      position:relative;
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 14px;
+      padding: 10px;
+      width: 148px;
+      height: 148px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      flex: 0 0 auto;
+    }
+    .link{
+      position:relative;
+      margin-top: 12px;
+      display:flex;
+      gap: 10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+    }
+    a{
+      color: #cdd1ff;
+      text-decoration: none;
+      word-break: break-all;
+      font-size: 13px;
+    }
+    a:hover{ text-decoration: underline; }
+    button{
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.18);
+      color: var(--text);
+      padding: 9px 10px;
+      border-radius: 12px;
+      cursor:pointer;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    button:hover{ background: rgba(255,255,255,.14); }
+    footer{
+      text-align:center;
+      color: var(--muted);
+      font-size: 12px;
+      padding: 18px 18px 28px;
+    }
+    .tiny{
+      opacity:.9;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Tip Pete - QR Codes</h1>
+    <p class="sub">
+      Scan a code, send a tip, keep the music and pucks moving.
+      More payment types can be added anytime.
+    </p>
+  </header>
+
+  <div class="wrap">
+    <div id="grid" class="grid"></div>
+  </div>
+
+  <footer>
+    <div class="tiny">Built for quick scanning on phones. Works great on a tablet at the merch table too.</div>
+  </footer>
+
+  <!-- QR Code library (client-side) -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+  <script>
+    // Add more entries here anytime.
+    // Tip: for PayPal, include https:// so it becomes a fully qualified URL.
+    const TIPS = [
+      {
+        id: "venmo",
+        name: "Venmo",
+        subtitle: "@petesimple",
+        url: "https://venmo.com/u/petesimple"
+      },
+      {
+        id: "cashapp",
+        name: "Cash App",
+        subtitle: "$petesimple",
+        url: "https://cash.app/$petesimple"
+      },
+      {
+        id: "paypal",
+        name: "PayPal",
+        subtitle: "paypal.me/PeteLippincott",
+        url: "https://paypal.me/PeteLippincott"
+      }
+    ];
+
+    const grid = document.getElementById("grid");
+
+    function el(tag, props = {}, children = []) {
+      const node = document.createElement(tag);
+      Object.entries(props).forEach(([k, v]) => {
+        if (k === "class") node.className = v;
+        else if (k === "html") node.innerHTML = v;
+        else node.setAttribute(k, v);
+      });
+      children.forEach(c => node.appendChild(c));
+      return node;
+    }
+
+    function copyToClipboard(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text);
+      }
+      // Fallback
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      ta.remove();
+      return Promise.resolve();
+    }
+
+    function buildCard(entry) {
+      const qrBox = el("div", { class: "qr", id: `qr-${entry.id}` });
+
+      const left = el("div", {}, [
+        el("h2", { class: "title" }, []),
+        el("p", { class: "hint" }, [])
+      ]);
+      left.querySelector(".title").textContent = entry.name;
+      left.querySelector(".hint").textContent = entry.subtitle || "";
+
+      const topRow = el("div", { class: "row" }, [left, qrBox]);
+
+      const linkA = el("a", { href: entry.url, target: "_blank", rel: "noopener noreferrer" });
+      linkA.textContent = entry.url;
+
+      const btnCopy = el("button");
+      btnCopy.textContent = "Copy link";
+      btnCopy.addEventListener("click", async () => {
+        await copyToClipboard(entry.url);
+        btnCopy.textContent = "Copied!";
+        setTimeout(() => (btnCopy.textContent = "Copy link"), 900);
+      });
+
+      const bottom = el("div", { class: "link" }, [linkA, btnCopy]);
+
+      const card = el("div", { class: "card" }, [topRow, bottom]);
+
+      // Generate QR after it is in DOM
+      setTimeout(() => {
+        const size = 120;
+        const target = document.getElementById(`qr-${entry.id}`);
+        target.innerHTML = "";
+        new QRCode(target, {
+          text: entry.url,
+          width: size,
+          height: size,
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      }, 0);
+
+      return card;
+    }
+
+    TIPS.forEach(t => grid.appendChild(buildCard(t)));
+  </script>
+</body>
+</html>
