@@ -68,12 +68,28 @@
       pointer-events:none;
     }
     .row{
-      position:relative;
-      display:flex;
-      align-items:flex-start;
-      justify-content:space-between;
-      gap: 10px;
-    }
+  position:relative;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap: 10px;
+}
+
+/* add these */
+.info{
+  flex: 1 1 auto;
+  min-width: 0;            /* critical: allows flex item to shrink */
+}
+
+.hint{
+  margin: 6px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.35;
+  overflow: hidden;         /* prevents pushing layout */
+  text-overflow: ellipsis;
+  white-space: nowrap;      /* keeps it on one line */
+}
     .title{
       font-size: 18px;
       font-weight: 700;
@@ -210,10 +226,10 @@
     function buildCard(entry) {
       const qrBox = el("div", { class: "qr", id: `qr-${entry.id}` });
 
-      const left = el("div", {}, [
-        el("h2", { class: "title" }, []),
-        el("p", { class: "hint" }, [])
-      ]);
+      const left = el("div", { class: "info" }, [
+  el("h2", { class: "title" }, []),
+  el("p", { class: "hint" }, [])
+]);
       left.querySelector(".title").textContent = entry.name;
       left.querySelector(".hint").textContent = entry.subtitle || "";
 
