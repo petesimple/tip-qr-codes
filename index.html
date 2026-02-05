@@ -95,12 +95,7 @@
       font-weight: 700;
       margin: 0;
     }
-    .hint{
-      margin: 6px 0 0;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.35;
-    }
+    
     .qr{
       position:relative;
       background: rgba(255,255,255,.08);
@@ -150,6 +145,63 @@
     .tiny{
       opacity:.9;
     }
+    @media (max-width: 520px) {
+  .row {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .info {
+    width: 100%;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .hint {
+    white-space: normal;
+    text-overflow: unset;
+    overflow: visible;
+    word-break: break-word;
+  }
+
+  .qr {
+    width: 180px;
+    height: 180px;
+    margin-bottom: 12px;
+  }
+
+  .link {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .link a {
+    font-size: 14px;
+  }
+
+  button {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+  }
+}
+    @media (max-width: 900px) {
+  .qr {
+    width: 132px;
+    height: 132px;
+  }
+}
+    button {
+  min-height: 44px; /* iOS tap target */
+}
+
+a {
+  padding: 6px 0;
+  display: inline-block;
+}
   </style>
 </head>
 <body>
