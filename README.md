@@ -15,7 +15,7 @@ Current links
 5. Save
 
 Your site will be live at:
-petesimple.github.io/tip-qr-codes/
+https://petesimple.github.io/tip-qr-codes/
 
 ## Adding more payment options
 Edit the `TIPS` array inside index.html and add another item with:
