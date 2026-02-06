@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Tip Petesimple - QR Codes</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Tip QR Builder</title>
   <meta name="theme-color" content="#0b0b0f" />
   <style>
     :root{
@@ -14,16 +14,62 @@
       --border:rgba(255,255,255,.10);
       --shadow: 0 14px 40px rgba(0,0,0,.45);
       --radius:18px;
+
+      --accentA: rgba(120,120,255,.10);
+      --accentB: rgba(255,120,200,.08);
+      --rainbowOpacity: .55;
+      --rainbowOn: 1;
     }
+
     *{box-sizing:border-box}
     body{
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      background: radial-gradient(900px 600px at 10% 0%, rgba(120,120,255,.10), transparent 60%),
-                  radial-gradient(900px 600px at 90% 10%, rgba(255,120,200,.08), transparent 55%),
-                  var(--bg);
+      background:
+        radial-gradient(900px 600px at 10% 0%, var(--accentA), transparent 60%),
+        radial-gradient(900px 600px at 90% 10%, var(--accentB), transparent 55%),
+        var(--bg);
       color:var(--text);
+      min-height: 100vh;
     }
+
+    /* full-screen rainbow layer (optional) */
+    body::before{
+      content:"";
+      position: fixed;
+      inset: -35%;
+      z-index: 0;
+      pointer-events: none;
+
+      background:
+        conic-gradient(
+          from 0deg,
+          rgba(255, 0, 102, .22),
+          rgba(255, 153, 0, .18),
+          rgba(255, 255, 0, .16),
+          rgba(0, 255, 153, .18),
+          rgba(0, 204, 255, .20),
+          rgba(102, 0, 255, .20),
+          rgba(255, 0, 204, .20),
+          rgba(255, 0, 102, .22)
+        );
+
+      filter: blur(40px) saturate(160%);
+      opacity: calc(var(--rainbowOpacity) * var(--rainbowOn));
+      animation: rainbowSpin 36s linear infinite, rainbowShift 18s ease-in-out infinite;
+    }
+    @keyframes rainbowSpin { to { transform: rotate(360deg); } }
+    @keyframes rainbowShift {
+      0%   { background-position: 0% 50%; }
+      50%  { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    header, .wrap, footer, .adminShell{
+      position: relative;
+      z-index: 1;
+    }
+
     header{
       padding: 28px 18px 10px;
       text-align:center;
@@ -35,16 +81,53 @@
     }
     .sub{
       margin:10px auto 0;
-      max-width: 720px;
+      max-width: 760px;
       color:var(--muted);
       line-height:1.45;
       font-size:14px;
     }
+
     .wrap{
       max-width: 980px;
       margin: 0 auto;
       padding: 18px;
     }
+
+    .tip-joke{
+      margin: 12px auto 0;
+      max-width: 860px;
+
+      font-style: normal;
+      font-weight: 900;
+      font-size: clamp(18px, 2.2vw, 26px);
+      line-height: 1.25;
+      letter-spacing: .2px;
+
+      color: rgba(255,255,255,.96);
+
+      padding: 12px 14px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.22);
+      backdrop-filter: blur(10px);
+
+      box-shadow:
+        0 10px 26px rgba(0,0,0,.45),
+        0 0 0 1px rgba(255,255,255,.06) inset,
+        0 0 22px rgba(255,255,255,.10);
+
+      text-shadow:
+        0 2px 10px rgba(0,0,0,.55),
+        0 0 18px rgba(255,255,255,.14);
+
+      transition: opacity .25s ease, transform .25s ease, filter .25s ease;
+    }
+    .tip-joke.fadeout{
+      opacity: 0;
+      transform: translateY(-4px) scale(.99);
+      filter: blur(1px);
+    }
+
     .grid{
       display:grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -59,6 +142,7 @@
       padding: 16px;
       position: relative;
       overflow:hidden;
+      backdrop-filter: blur(8px);
     }
     .card:before{
       content:"";
@@ -68,34 +152,30 @@
       pointer-events:none;
     }
     .row{
-  position:relative;
-  display:flex;
-  align-items:flex-start;
-  justify-content:space-between;
-  gap: 10px;
-}
-
-/* add these */
-.info{
-  flex: 1 1 auto;
-  min-width: 0;            /* critical: allows flex item to shrink */
-}
-
-.hint{
-  margin: 6px 0 0;
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.35;
-  overflow: hidden;         /* prevents pushing layout */
-  text-overflow: ellipsis;
-  white-space: nowrap;      /* keeps it on one line */
-}
+      position:relative;
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap: 10px;
+    }
+    .info{
+      flex: 1 1 auto;
+      min-width: 0;
+    }
     .title{
       font-size: 18px;
       font-weight: 700;
       margin: 0;
     }
-    
+    .hint{
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
     .qr{
       position:relative;
       background: rgba(255,255,255,.08);
@@ -123,317 +203,498 @@
       text-decoration: none;
       word-break: break-all;
       font-size: 13px;
+      padding: 6px 0;
+      display: inline-block;
     }
     a:hover{ text-decoration: underline; }
-    button{
+
+    button, .btn{
       background: rgba(255,255,255,.10);
       border: 1px solid rgba(255,255,255,.18);
       color: var(--text);
       padding: 9px 10px;
       border-radius: 12px;
       cursor:pointer;
-      font-weight: 600;
+      font-weight: 700;
       font-size: 13px;
+      min-height: 44px;
     }
-    button:hover{ background: rgba(255,255,255,.14); }
+    button:hover, .btn:hover{ background: rgba(255,255,255,.14); }
+
     footer{
       text-align:center;
       color: var(--muted);
       font-size: 12px;
       padding: 18px 18px 28px;
     }
-    .tiny{
-      opacity:.9;
+    .tiny{ opacity:.9; }
+
+    /* Admin UI */
+    .adminShell{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 18px 18px 34px;
+    }
+    .adminTop{
+      display:flex;
+      gap: 12px;
+      align-items:center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,.18);
+      color: rgba(255,255,255,.9);
+      font-weight: 800;
+    }
+    .adminGrid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 16px;
+    }
+    .panel{
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(0,0,0,.18);
+      box-shadow: var(--shadow);
+      padding: 14px;
+      backdrop-filter: blur(10px);
+    }
+    .panel h2{
+      margin: 0 0 10px;
+      font-size: 16px;
+      letter-spacing:.2px;
+    }
+    .field{
+      display:flex;
+      flex-direction: column;
+      gap: 6px;
+      margin: 10px 0;
+    }
+    label{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 800;
+      letter-spacing:.2px;
+    }
+    input, textarea, select{
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      outline: none;
+      font-weight: 700;
+    }
+    textarea{ min-height: 92px; resize: vertical; font-weight: 700; line-height: 1.35; }
+    .row2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .row3{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+    }
+    .mutedNote{
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+      margin-top: 8px;
+    }
+    .list{
+      display:flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .item{
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 14px;
+      background: rgba(255,255,255,.04);
+      padding: 12px;
+      display:flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .itemTop{
+      display:flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .tag{
+      font-size: 12px;
+      font-weight: 900;
+      color: rgba(255,255,255,.9);
+      opacity: .95;
+    }
+    .itemBtns{
+      display:flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .danger{ border-color: rgba(255,80,120,.45); }
+    .danger:hover{ background: rgba(255,80,120,.12); }
+
+    .ok{ border-color: rgba(80,255,170,.35); }
+    .ok:hover{ background: rgba(80,255,170,.12); }
+
+    .small{
+      font-size: 12px;
+      font-weight: 800;
+      opacity: .95;
+    }
+
+    @media (max-width: 900px) {
+      .adminGrid{ grid-template-columns: 1fr; }
+      .qr { width: 132px; height: 132px; }
     }
     @media (max-width: 520px) {
-  .row {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .info {
-    width: 100%;
-  }
-
-  .title {
-    font-size: 20px;
-  }
-
-  .hint {
-    white-space: normal;
-    text-overflow: unset;
-    overflow: visible;
-    word-break: break-word;
-  }
-
-  .qr {
-    width: 180px;
-    height: 180px;
-    margin-bottom: 12px;
-  }
-
-  .link {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .link a {
-    font-size: 14px;
-  }
-
-  button {
-    width: 100%;
-    padding: 12px;
-    font-size: 14px;
-  }
-}
-    @media (max-width: 900px) {
-  .qr {
-    width: 132px;
-    height: 132px;
-  }
-}
-    button {
-  min-height: 44px; /* iOS tap target */
-}
-
-a {
-  padding: 6px 0;
-  display: inline-block;
-}
-    .tip-joke{
-  margin: 12px auto 0;
-  max-width: 860px;
-
-  font-style: normal;
-  font-weight: 900;
-  font-size: clamp(18px, 2.2vw, 26px);
-  line-height: 1.25;
-  letter-spacing: .2px;
-
-  color: rgba(255,255,255,.96);
-
-  padding: 12px 14px;
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,.18);
-  background: rgba(0,0,0,.22);
-  backdrop-filter: blur(10px);
-
-  box-shadow:
-    0 10px 26px rgba(0,0,0,.45),
-    0 0 0 1px rgba(255,255,255,.06) inset,
-    0 0 22px rgba(255,255,255,.10);
-
-  text-shadow:
-    0 2px 10px rgba(0,0,0,.55),
-    0 0 18px rgba(255,255,255,.14);
-
-  transition: opacity .25s ease, transform .25s ease, filter .25s ease;
-}
-
-.tip-joke.fadeout{
-  opacity: 0;
-  transform: translateY(-4px) scale(.99);
-  filter: blur(1px);
-}
-
-@keyframes rainbowShift {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-/* full-screen rainbow layer */
-body::before{
-  content:"";
-  position: fixed;
-  inset: -35%;                 /* oversized so rotation never shows edges */
-  z-index: 0;
-  pointer-events: none;
-
-  background:
-    conic-gradient(
-      from 0deg,
-      rgba(255, 0, 102, .22),
-      rgba(255, 153, 0, .18),
-      rgba(255, 255, 0, .16),
-      rgba(0, 255, 153, .18),
-      rgba(0, 204, 255, .20),
-      rgba(102, 0, 255, .20),
-      rgba(255, 0, 204, .20),
-      rgba(255, 0, 102, .22)
-    );
-
-  filter: blur(40px) saturate(160%);
-  opacity: .55;
-
-  animation:
-    rainbowSpin 36s linear infinite,
-    rainbowShift 18s ease-in-out infinite;
-}
-
-/* make sure your actual content sits above the rainbow layer */
-header, .wrap, footer{
-  position: relative;
-  z-index: 1;
-}
-
-/* optional: slightly strengthen card readability */
-.card{
-  backdrop-filter: blur(8px);
-}
+      .row {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      .info { width: 100%; }
+      .title { font-size: 20px; }
+      .hint {
+        white-space: normal;
+        text-overflow: unset;
+        overflow: visible;
+        word-break: break-word;
+      }
+      .qr {
+        width: 180px;
+        height: 180px;
+        margin-bottom: 12px;
+      }
+      .link {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .link a { font-size: 14px; }
+      button { width: 100%; padding: 12px; font-size: 14px; }
+    }
   </style>
 </head>
+
 <body>
-  <header>
-    <h1>Tip Petesimple - QR Codes</h1>
-    <p class="sub">
-      Scan a code, send a tip, keep the music moving.
-    </p>
+  <!-- PUBLIC VIEW -->
+  <header id="publicHeader">
+    <h1 id="pageTitle">Tip Petesimple - QR Codes</h1>
+    <p id="pageSubtitle" class="sub">Scan a code, send a tip, keep the music moving.</p>
     <p id="tipJoke" class="sub tip-joke"></p>
   </header>
 
-  <div class="wrap">
+  <div id="publicWrap" class="wrap">
     <div id="grid" class="grid"></div>
   </div>
 
-  <footer>
+  <footer id="publicFooter">
     <div class="tiny">Built for quick scanning on phones. Works great on a tablet at the merch table too.</div>
   </footer>
+
+  <!-- ADMIN VIEW -->
+  <div id="admin" class="adminShell" style="display:none;">
+    <div class="adminTop">
+      <div class="pill">Admin Mode - Tip Jar Builder</div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button id="btnViewPublic" class="ok">Open Public View</button>
+        <button id="btnCopyPublicLink">Copy Public Link</button>
+        <button id="btnResetDefault" class="danger">Reset to Petesimple Default</button>
+      </div>
+    </div>
+
+    <div class="adminGrid">
+      <div class="panel">
+        <h2>Page Settings</h2>
+
+        <div class="row2">
+          <div class="field">
+            <label>Page Title</label>
+            <input id="inTitle" type="text" />
+          </div>
+          <div class="field">
+            <label>Genre (shows in jokes)</label>
+            <select id="inGenre"></select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Page Subtitle</label>
+          <input id="inSubtitle" type="text" />
+        </div>
+
+        <h2 style="margin-top:16px;">Background</h2>
+        <div class="row3">
+          <div class="field">
+            <label>Rainbow Layer</label>
+            <select id="inRainbow">
+              <option value="on">On</option>
+              <option value="off">Off</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Theme Accent</label>
+            <select id="inTheme">
+              <option value="neon">Neon</option>
+              <option value="midnight">Midnight</option>
+              <option value="sunset">Sunset</option>
+              <option value="ice">Ice</option>
+              <option value="mono">Mono</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Rainbow Opacity</label>
+            <input id="inRainbowOpacity" type="number" min="0" max="1" step="0.05" />
+          </div>
+        </div>
+
+        <h2 style="margin-top:16px;">Tip Jokes</h2>
+        <div class="row3">
+          <div class="field">
+            <label>Jokes Enabled</label>
+            <select id="inJokesOn">
+              <option value="on">On</option>
+              <option value="off">Off</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Rotate Every (seconds)</label>
+            <input id="inJokeEvery" type="number" min="5" step="1" />
+          </div>
+          <div class="field">
+            <label>Special Chance (0 to 1)</label>
+            <input id="inSpecialChance" type="number" min="0" max="1" step="0.05" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Joke Lines (one per line) - edit freely</label>
+          <textarea id="inJokeLines"></textarea>
+          <div class="mutedNote">
+            These are your “specials.” The normal jokes are automatically built, but you can also just make these the whole show by setting Special Chance to 1.
+          </div>
+        </div>
+
+        <h2 style="margin-top:16px;">Links (QR Cards)</h2>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button id="btnAdd">Add New Link</button>
+          <button id="btnExport">Export Config JSON</button>
+          <button id="btnImport">Import Config JSON</button>
+          <button id="btnCopyConfigLink">Copy “Share Config” Link</button>
+        </div>
+
+        <div id="list" class="list"></div>
+      </div>
+
+      <div class="panel">
+        <h2>Live Preview</h2>
+        <div class="mutedNote">
+          This preview updates as you type. Public view is what fans see.
+          <br><br>
+          Tip: give another act a config link or export JSON - they can import and instantly have their own setup.
+        </div>
+
+        <div style="height:12px"></div>
+        <div class="card">
+          <div class="row">
+            <div class="info">
+              <h2 class="title" id="prevTitle">Example Card</h2>
+              <p class="hint" id="prevSub">subtitle</p>
+            </div>
+            <div class="qr" id="prevQR"></div>
+          </div>
+          <div class="link">
+            <a id="prevLink" href="#" target="_blank" rel="noopener noreferrer">https://example.com</a>
+            <button id="btnTestCopy">Copy link</button>
+          </div>
+        </div>
+
+        <div style="height:14px"></div>
+        <div class="mutedNote">
+          Public URLs:
+          <br>- <span class="small">Admin:</span> add <b>?admin=1</b>
+          <br>- <span class="small">Public:</span> normal page
+          <br>- <span class="small">Share config:</span> “Copy Share Config Link” bakes settings into the URL hash
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- QR Code library (client-side) -->
   <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 
   <script>
-    // Add more entries here anytime.
-    // Tip: for PayPal, include https:// so it becomes a fully qualified URL.
-    const TIPS = [
-      {
-        id: "venmo",
-        name: "Venmo",
-        subtitle: "@petesimple",
-        url: "https://venmo.com/u/petesimple"
+    // ----------------------------
+    // DEFAULT (Petesimple example)
+    // ----------------------------
+    const DEFAULT_CONFIG = {
+      version: 1,
+      page: {
+        title: "Tip Petesimple - QR Codes",
+        subtitle: "Scan a code, send a tip, keep the music moving.",
+        genre: "Folk Rock",
       },
-      {
-        id: "cashapp",
-        name: "Cash App",
-        subtitle: "$petesimple",
-        url: "https://cash.app/$petesimple"
+      background: {
+        rainbow: true,
+        rainbowOpacity: 0.55,
+        theme: "neon" // neon | midnight | sunset | ice | mono
       },
-      {
-        id: "paypal",
-        name: "PayPal",
-        subtitle: "paypal.me/PeteLippincott",
-        url: "https://paypal.me/PeteLippincott"
+      jokes: {
+        enabled: true,
+        everySeconds: 20,
+        specialChance: 0.30,
+        specialLines: [
+          "If you tip, I will pretend my life is organized for 3 full seconds.",
+          "Tip jar challenge: donate one dollar per time you have said 'one more song.'",
+          "Warning: tipping may cause spontaneous dancing and better decision making.",
+          "This is a tip jar. Not a suggestion jar. Please do not tip me life advice.",
+          "Tips go directly to the 'keep doing this' fund. It is dangerously low.",
+          "Tip now and I will emotionally support your karaoke career.",
+          "If you do not tip, the guitar gets it. The guitar has expensive taste.",
+          "Tip jar status: accepting money, compliments, and mildly heroic legends about me.",
+          "Every tip adds +1 to my luck stat for the rest of the night."
+        ]
       },
-      {
-        id: "Apple Music",
-        name: "Apple Music",
-        subtitle: "buy a song or album!",
-        url: "https://music.apple.com/us/artist/petesimple/253020124"
+      genres: [
+        "Folk Rock","Rock","Indie","Country","Jazz","Blues","Hip Hop","EDM","Metal","Pop","Reggae","Singer Songwriter"
+      ],
+      links: [
+        { id: "venmo",   name: "Venmo",     subtitle: "@petesimple", url: "https://venmo.com/u/petesimple" },
+        { id: "cashapp", name: "Cash App",  subtitle: "$petesimple", url: "https://cash.app/$petesimple" },
+        { id: "paypal",  name: "PayPal",    subtitle: "paypal.me/PeteLippincott", url: "https://paypal.me/PeteLippincott" },
+        { id: "apple",   name: "Apple Music", subtitle: "buy a song or album!", url: "https://music.apple.com/us/artist/petesimple/253020124" }
+      ]
+    };
+
+    const STORAGE_KEY = "tipqr_admin_config_v1";
+
+    // ----------------------------
+    // Helpers
+    // ----------------------------
+    const $ = (id) => document.getElementById(id);
+    function uid(){
+      return "id_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16);
+    }
+    function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
+    function pick(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+
+    function safeJSONParse(str){
+      try { return JSON.parse(str); } catch { return null; }
+    }
+
+    function copyToClipboard(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text);
       }
-    ];
-    
-    const grid = document.getElementById("grid");
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand("copy");
+      ta.remove();
+      return Promise.resolve();
+    }
 
-function pick(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
+    function normalizeUrl(u){
+      const s = (u || "").trim();
+      if (!s) return "";
+      // allow mailto:, https:, http:
+      if (/^(https?:|mailto:)/i.test(s)) return s;
+      // common: paypal.me/...
+      if (/^[\w.-]+\.[a-z]{2,}\/?/i.test(s)) return "https://" + s;
+      return s;
+    }
 
-function buildTipJoke(){
-  // 12 x 12 x 10 = 1440 combos, plus specials
-  const openers = [
-    "Tip jar fact","Breaking news","Hot tip","Science update","Guitar report",
-    "Band meeting minutes","Merch table memo","This just in","Official statement",
-    "Public service announcement","Weather forecast","Totally legal disclaimer"
-  ];
+    function deepClone(obj){ return JSON.parse(JSON.stringify(obj)); }
 
-  const middles = [
-    "this song runs on","this groove is powered by","these guitars are sponsored by",
-    "my strings are held together with","the drummer accepts payment in",
-    "the bassist demands tribute via","the amp gods require","the set list is fueled by",
-    "the encore is unlocked by","this vibe survives thanks to","the soundcheck is paid for with",
-    "my rent is gently encouraged by"
-  ];
+    // ----------------------------
+    // Config load order:
+    // 1) URL hash cfg
+    // 2) localStorage
+    // 3) DEFAULT
+    // ----------------------------
+    function loadConfig(){
+      const fromHash = readConfigFromHash();
+      if (fromHash) return fromHash;
 
-  const closers = [
-    "tips and positive energy.",
-    "tips only. energy optional.",
-    "tips. preferably the money kind.",
-    "tips. I promise to spend them irresponsibly on responsible things.",
-    "tips. I will not buy more pedals. (I will.)",
-    "tips. I will use them to keep the music loud and the guitar fast.",
-    "tips. it keeps this whole operation mostly upright.",
-    "tips. no refunds, only riffs.",
-    "tips. your generosity is my favorite instrument.",
-    "tips. scan now, regret nothing."
-  ];
+      const raw = localStorage.getItem(STORAGE_KEY);
+      const parsed = raw ? safeJSONParse(raw) : null;
+      if (parsed && parsed.links && parsed.page) return parsed;
 
-  const specials = [
-    "If you tip, I will pretend my life is organized for 3 full seconds.",
-    "Tip jar challenge: donate one dollar per time you have said 'one more song.'",
-    "Warning: tipping may cause spontaneous dancing and better decision making.",
-    "This is a tip jar. Not a suggestion jar. Please do not tip me life advice.",
-    "Tips go directly to the 'keep doing this' fund. It is dangerously low.",
-    "Tip now and I will emotionally support your karaoke career.",
-    "If you do not tip, the guitar gets it. The guitar has expensive taste.",
-    "Tip jar is like conductors batons: small nudges, big results.",
-    "Tip jar status: accepting money, compliments, and mildly heroic legends about me.",
-    "Every tip adds +1 to my luck stat for the rest of the night."
-  ];
+      return deepClone(DEFAULT_CONFIG);
+    }
 
-  const useSpecial = Math.random() < 0.30;
-  return useSpecial
-    ? pick(specials)
-    : `${pick(openers)}: ${pick(middles)} ${pick(closers)}`;
-}
+    function saveConfig(cfg){
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cfg)); } catch(e){}
+    }
 
-function nextJokeDifferentFrom(last){
-  // try a few times to avoid repeats
-  for (let i = 0; i < 8; i++){
-    const j = buildTipJoke();
-    if (j !== last) return j;
-  }
-  return buildTipJoke();
-}
+    // ----------------------------
+    // Shareable config link via hash
+    // ----------------------------
+    function writeConfigToHash(cfg){
+      // compress-lite: base64 of json (good enough for our use)
+      const json = JSON.stringify(cfg);
+      const b64 = btoa(unescape(encodeURIComponent(json)));
+      location.hash = "cfg=" + b64;
+    }
 
-let jokeTimer = null;
+    function readConfigFromHash(){
+      const h = (location.hash || "").replace(/^#/, "");
+      if (!h.startsWith("cfg=")) return null;
+      const b64 = h.slice(4);
+      try{
+        const json = decodeURIComponent(escape(atob(b64)));
+        const parsed = safeJSONParse(json);
+        if (parsed && parsed.links && parsed.page) return parsed;
+      }catch(e){}
+      return null;
+    }
 
-function setTipJoke({ animate = true } = {}){
-  const elJoke = document.getElementById("tipJoke");
-  if (!elJoke) return;
+    function clearHashConfig(){
+      if ((location.hash || "").startsWith("#cfg=")){
+        history.replaceState(null, "", location.pathname + location.search);
+      }
+    }
 
-  let last = elJoke.textContent || "";
-  let joke = nextJokeDifferentFrom(last);
+    // ----------------------------
+    // Background themes
+    // ----------------------------
+    function applyTheme(cfg){
+      document.documentElement.style.setProperty("--rainbowOn", cfg.background.rainbow ? "1" : "0");
+      document.documentElement.style.setProperty("--rainbowOpacity", String(clamp(+cfg.background.rainbowOpacity || 0.55, 0, 1)));
 
-  // persist last joke (optional)
-  try { localStorage.setItem("lastTipJoke", joke); } catch (e) {}
+      const theme = cfg.background.theme || "neon";
+      const themes = {
+        neon:    { a:"rgba(120,120,255,.10)", b:"rgba(255,120,200,.08)" },
+        midnight:{ a:"rgba(80,140,255,.08)",  b:"rgba(0,255,200,.06)" },
+        sunset:  { a:"rgba(255,140,60,.10)",  b:"rgba(255,40,120,.08)" },
+        ice:     { a:"rgba(120,255,255,.08)", b:"rgba(160,180,255,.08)" },
+        mono:    { a:"rgba(255,255,255,.06)", b:"rgba(255,255,255,.04)" }
+      };
+      const t = themes[theme] || themes.neon;
+      document.documentElement.style.setProperty("--accentA", t.a);
+      document.documentElement.style.setProperty("--accentB", t.b);
+    }
 
-  if (!animate){
-    elJoke.textContent = joke;
-    return;
-  }
+    // ----------------------------
+    // Public render
+    // ----------------------------
+    const grid = $("grid");
+    let jokeTimer = null;
 
-  elJoke.classList.add("fadeout");
-  setTimeout(() => {
-    elJoke.textContent = joke;
-    elJoke.classList.remove("fadeout");
-  }, 220);
-}
-
-function startJokeRotation(){
-  // set one immediately on load
-  setTipJoke({ animate: false });
-
-  // rotate every 20 seconds
-  if (jokeTimer) clearInterval(jokeTimer);
-  jokeTimer = setInterval(() => setTipJoke({ animate: true }), 20000);
-}
-
-// Run on load
-startJokeRotation();
-
-
-    
     function el(tag, props = {}, children = []) {
       const node = document.createElement(tag);
       Object.entries(props).forEach(([k, v]) => {
@@ -445,28 +706,14 @@ startJokeRotation();
       return node;
     }
 
-    function copyToClipboard(text) {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        return navigator.clipboard.writeText(text);
-      }
-      // Fallback
-      const ta = document.createElement("textarea");
-      ta.value = text;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
-      ta.remove();
-      return Promise.resolve();
-    }
-
     function buildCard(entry) {
       const qrBox = el("div", { class: "qr", id: `qr-${entry.id}` });
 
       const left = el("div", { class: "info" }, [
-  el("h2", { class: "title" }, []),
-  el("p", { class: "hint" }, [])
-]);
-      left.querySelector(".title").textContent = entry.name;
+        el("h2", { class: "title" }, []),
+        el("p", { class: "hint" }, [])
+      ]);
+      left.querySelector(".title").textContent = entry.name || "Untitled";
       left.querySelector(".hint").textContent = entry.subtitle || "";
 
       const topRow = el("div", { class: "row" }, [left, qrBox]);
@@ -483,13 +730,12 @@ startJokeRotation();
       });
 
       const bottom = el("div", { class: "link" }, [linkA, btnCopy]);
-
       const card = el("div", { class: "card" }, [topRow, bottom]);
 
-      // Generate QR after it is in DOM
       setTimeout(() => {
         const size = 120;
         const target = document.getElementById(`qr-${entry.id}`);
+        if (!target) return;
         target.innerHTML = "";
         new QRCode(target, {
           text: entry.url,
@@ -502,7 +748,411 @@ startJokeRotation();
       return card;
     }
 
-    TIPS.forEach(t => grid.appendChild(buildCard(t)));
+    function buildTipJokeEngine(cfg){
+      const genre = (cfg.page.genre || "Music").trim();
+
+      // these are the “constructed” jokes
+      const openers = [
+        "Tip jar fact","Breaking news","Hot tip","Science update","Guitar report",
+        "Band meeting minutes","Merch table memo","This just in","Official statement",
+        "Public service announcement","Weather forecast","Totally legal disclaimer"
+      ];
+      const middles = [
+        `this ${genre.toLowerCase()} set runs on`,
+        `this ${genre.toLowerCase()} groove is powered by`,
+        "these guitars are sponsored by",
+        "my strings are held together with",
+        "the drummer accepts payment in",
+        "the bassist demands tribute via",
+        "the amp gods require",
+        "the set list is fueled by",
+        "the encore is unlocked by",
+        "this vibe survives thanks to",
+        "the soundcheck is paid for with",
+        "my rent is gently encouraged by"
+      ];
+      const closers = [
+        "tips and positive energy.",
+        "tips only. energy optional.",
+        "tips. preferably the money kind.",
+        "tips. I promise to spend them responsibly on irresponsible things.",
+        "tips. I will not buy more pedals. (I will.)",
+        "tips. no refunds, only riffs.",
+        "tips. your generosity is my favorite instrument.",
+        "tips. scan now, regret nothing."
+      ];
+
+      const specials = (cfg.jokes.specialLines || []).map(s => s.trim()).filter(Boolean);
+      const specialChance = clamp(+cfg.jokes.specialChance || 0.3, 0, 1);
+
+      function buildOne(){
+        const useSpecial = cfg.jokes.enabled && specials.length && (Math.random() < specialChance);
+        if (useSpecial) return pick(specials);
+        return `${pick(openers)}: ${pick(middles)} ${pick(closers)}`;
+      }
+
+      function nextDifferent(last){
+        for (let i=0;i<8;i++){
+          const j = buildOne();
+          if (j !== last) return j;
+        }
+        return buildOne();
+      }
+
+      return { nextDifferent };
+    }
+
+    function renderPublic(cfg){
+      applyTheme(cfg);
+
+      $("pageTitle").textContent = cfg.page.title || "Tip QR Codes";
+      $("pageSubtitle").textContent = cfg.page.subtitle || "";
+      const jokeEl = $("tipJoke");
+
+      // cards
+      grid.innerHTML = "";
+      (cfg.links || [])
+        .filter(x => x && x.url)
+        .forEach(entry => grid.appendChild(buildCard(entry)));
+
+      // jokes
+      if (jokeTimer) clearInterval(jokeTimer);
+      jokeTimer = null;
+
+      if (!cfg.jokes.enabled){
+        jokeEl.style.display = "none";
+        return;
+      }
+      jokeEl.style.display = "";
+
+      const engine = buildTipJokeEngine(cfg);
+
+      function setJoke({animate=true}={}){
+        const last = jokeEl.textContent || "";
+        const j = engine.nextDifferent(last);
+        try { localStorage.setItem("lastTipJoke", j); } catch(e){}
+
+        if (!animate){
+          jokeEl.textContent = j;
+          return;
+        }
+        jokeEl.classList.add("fadeout");
+        setTimeout(() => {
+          jokeEl.textContent = j;
+          jokeEl.classList.remove("fadeout");
+        }, 220);
+      }
+
+      setJoke({animate:false});
+      const every = clamp(+cfg.jokes.everySeconds || 20, 5, 120);
+      jokeTimer = setInterval(() => setJoke({animate:true}), every * 1000);
+    }
+
+    // ----------------------------
+    // Admin render
+    // ----------------------------
+    function setAdminMode(on){
+      $("admin").style.display = on ? "" : "none";
+      $("publicHeader").style.display = on ? "none" : "";
+      $("publicWrap").style.display = on ? "none" : "";
+      $("publicFooter").style.display = on ? "none" : "";
+    }
+
+    function populateGenreSelect(cfg){
+      const sel = $("inGenre");
+      sel.innerHTML = "";
+      const genres = (cfg.genres || []).slice();
+      if (!genres.includes(cfg.page.genre)) genres.unshift(cfg.page.genre);
+      genres
+        .filter(Boolean)
+        .forEach(g => {
+          const opt = document.createElement("option");
+          opt.value = g;
+          opt.textContent = g;
+          sel.appendChild(opt);
+        });
+    }
+
+    function buildItemEditor(cfg, idx){
+      const entry = cfg.links[idx];
+
+      const box = document.createElement("div");
+      box.className = "item";
+
+      const top = document.createElement("div");
+      top.className = "itemTop";
+
+      const tag = document.createElement("div");
+      tag.className = "tag";
+      tag.textContent = `#${idx+1} - ${entry.name || "Untitled"}`;
+
+      const btns = document.createElement("div");
+      btns.className = "itemBtns";
+
+      const up = document.createElement("button");
+      up.textContent = "Up";
+      up.disabled = idx === 0;
+      up.addEventListener("click", () => {
+        const a = cfg.links[idx-1];
+        cfg.links[idx-1] = cfg.links[idx];
+        cfg.links[idx] = a;
+        saveConfig(cfg);
+        renderAdmin(cfg);
+      });
+
+      const down = document.createElement("button");
+      down.textContent = "Down";
+      down.disabled = idx === cfg.links.length - 1;
+      down.addEventListener("click", () => {
+        const a = cfg.links[idx+1];
+        cfg.links[idx+1] = cfg.links[idx];
+        cfg.links[idx] = a;
+        saveConfig(cfg);
+        renderAdmin(cfg);
+      });
+
+      const del = document.createElement("button");
+      del.textContent = "Delete";
+      del.className = "danger";
+      del.addEventListener("click", () => {
+        cfg.links.splice(idx,1);
+        saveConfig(cfg);
+        renderAdmin(cfg);
+      });
+
+      btns.appendChild(up);
+      btns.appendChild(down);
+      btns.appendChild(del);
+
+      top.appendChild(tag);
+      top.appendChild(btns);
+
+      const f1 = field("Name", entry.name, (v)=>{ entry.name=v; });
+      const f2 = field("Subtitle", entry.subtitle||"", (v)=>{ entry.subtitle=v; });
+      const f3 = field("URL", entry.url, (v)=>{ entry.url=normalizeUrl(v); });
+
+      box.appendChild(top);
+      box.appendChild(f1);
+      box.appendChild(f2);
+      box.appendChild(f3);
+
+      return box;
+    }
+
+    function field(labelText, value, onInput){
+      const wrap = document.createElement("div");
+      wrap.className = "field";
+      const lab = document.createElement("label");
+      lab.textContent = labelText;
+      const inp = document.createElement("input");
+      inp.value = value || "";
+      inp.addEventListener("input", () => {
+        onInput(inp.value);
+        saveConfig(window.__CFG);
+        renderPreview(window.__CFG);
+        renderPublicMirrorIfWanted(window.__CFG);
+      });
+      wrap.appendChild(lab);
+      wrap.appendChild(inp);
+      return wrap;
+    }
+
+    function renderPreview(cfg){
+      const first = (cfg.links || []).find(x => x && x.url) || { name:"Example Card", subtitle:"subtitle", url:"https://example.com" };
+      $("prevTitle").textContent = first.name || "Example Card";
+      $("prevSub").textContent = first.subtitle || "";
+      $("prevLink").textContent = first.url || "";
+      $("prevLink").href = first.url || "#";
+
+      const target = $("prevQR");
+      target.innerHTML = "";
+      if (first.url){
+        new QRCode(target, {
+          text: first.url,
+          width: 120,
+          height: 120,
+          correctLevel: QRCode.CorrectLevel.M
+        });
+      }
+    }
+
+    function renderAdmin(cfg){
+      applyTheme(cfg);
+
+      $("inTitle").value = cfg.page.title || "";
+      $("inSubtitle").value = cfg.page.subtitle || "";
+      populateGenreSelect(cfg);
+      $("inGenre").value = cfg.page.genre || (cfg.genres?.[0] || "Music");
+
+      $("inRainbow").value = cfg.background.rainbow ? "on" : "off";
+      $("inTheme").value = cfg.background.theme || "neon";
+      $("inRainbowOpacity").value = String(clamp(+cfg.background.rainbowOpacity || 0.55, 0, 1));
+
+      $("inJokesOn").value = cfg.jokes.enabled ? "on" : "off";
+      $("inJokeEvery").value = String(clamp(+cfg.jokes.everySeconds || 20, 5, 120));
+      $("inSpecialChance").value = String(clamp(+cfg.jokes.specialChance || 0.30, 0, 1));
+      $("inJokeLines").value = (cfg.jokes.specialLines || []).join("\n");
+
+      const list = $("list");
+      list.innerHTML = "";
+      (cfg.links || []).forEach((_, idx) => list.appendChild(buildItemEditor(cfg, idx)));
+
+      renderPreview(cfg);
+    }
+
+    function wireAdminInputs(cfg){
+      $("inTitle").addEventListener("input", (e) => {
+        cfg.page.title = e.target.value;
+        saveConfig(cfg);
+        renderPreview(cfg);
+      });
+      $("inSubtitle").addEventListener("input", (e) => {
+        cfg.page.subtitle = e.target.value;
+        saveConfig(cfg);
+        renderPreview(cfg);
+      });
+      $("inGenre").addEventListener("change", (e) => {
+        cfg.page.genre = e.target.value;
+        saveConfig(cfg);
+      });
+
+      $("inRainbow").addEventListener("change", (e) => {
+        cfg.background.rainbow = e.target.value === "on";
+        saveConfig(cfg);
+        applyTheme(cfg);
+      });
+      $("inTheme").addEventListener("change", (e) => {
+        cfg.background.theme = e.target.value;
+        saveConfig(cfg);
+        applyTheme(cfg);
+      });
+      $("inRainbowOpacity").addEventListener("input", (e) => {
+        cfg.background.rainbowOpacity = clamp(+e.target.value || 0.55, 0, 1);
+        saveConfig(cfg);
+        applyTheme(cfg);
+      });
+
+      $("inJokesOn").addEventListener("change", (e) => {
+        cfg.jokes.enabled = e.target.value === "on";
+        saveConfig(cfg);
+        renderPreview(cfg);
+      });
+      $("inJokeEvery").addEventListener("input", (e) => {
+        cfg.jokes.everySeconds = clamp(+e.target.value || 20, 5, 120);
+        saveConfig(cfg);
+      });
+      $("inSpecialChance").addEventListener("input", (e) => {
+        cfg.jokes.specialChance = clamp(+e.target.value || 0.3, 0, 1);
+        saveConfig(cfg);
+      });
+      $("inJokeLines").addEventListener("input", (e) => {
+        cfg.jokes.specialLines = e.target.value.split("\n").map(s => s.trim()).filter(Boolean);
+        saveConfig(cfg);
+      });
+
+      $("btnAdd").addEventListener("click", () => {
+        cfg.links.push({ id: uid(), name: "New Link", subtitle: "what is this?", url: "https://example.com" });
+        saveConfig(cfg);
+        renderAdmin(cfg);
+      });
+
+      $("btnExport").addEventListener("click", async () => {
+        const json = JSON.stringify(cfg, null, 2);
+        await copyToClipboard(json);
+        alert("Config JSON copied to clipboard. Paste it into a file or message.");
+      });
+
+      $("btnImport").addEventListener("click", async () => {
+        const raw = prompt("Paste config JSON here:");
+        if (!raw) return;
+        const parsed = safeJSONParse(raw);
+        if (!parsed || !parsed.links || !parsed.page){
+          alert("That JSON does not look like a valid config.");
+          return;
+        }
+        window.__CFG = parsed;
+        saveConfig(window.__CFG);
+        clearHashConfig();
+        renderAdmin(window.__CFG);
+      });
+
+      $("btnCopyConfigLink").addEventListener("click", async () => {
+        writeConfigToHash(cfg);
+        const url = location.origin + location.pathname + "?admin=1" + location.hash;
+        await copyToClipboard(url);
+        alert("Admin config link copied. Open it on another device to load this setup.");
+      });
+
+      $("btnCopyPublicLink").addEventListener("click", async () => {
+        // public link should include cfg hash too if present (so other acts can share a single public link)
+        const base = location.origin + location.pathname;
+        const url = base + (location.hash || "");
+        await copyToClipboard(url);
+        alert("Public link copied.");
+      });
+
+      $("btnViewPublic").addEventListener("click", () => {
+        // open public in same tab, keep config in hash if present
+        const base = location.origin + location.pathname + (location.hash || "");
+        location.href = base;
+      });
+
+      $("btnResetDefault").addEventListener("click", () => {
+        if (!confirm("Reset everything to Petesimple default?")) return;
+        window.__CFG = deepClone(DEFAULT_CONFIG);
+        saveConfig(window.__CFG);
+        clearHashConfig();
+        renderAdmin(window.__CFG);
+      });
+
+      $("btnTestCopy").addEventListener("click", async () => {
+        const u = $("prevLink").href || "";
+        if (!u) return;
+        await copyToClipboard(u);
+        $("btnTestCopy").textContent = "Copied!";
+        setTimeout(() => $("btnTestCopy").textContent = "Copy link", 900);
+      });
+    }
+
+    // When editing in admin, it’s nice to see actual public render quickly (optional)
+    function renderPublicMirrorIfWanted(cfg){
+      // no-op, but left here if you later want a small embedded preview
+      return;
+    }
+
+    // ----------------------------
+    // Boot
+    // ----------------------------
+    const params = new URLSearchParams(location.search);
+    const isAdmin = params.get("admin") === "1";
+
+    window.__CFG = loadConfig();
+
+    // normalize urls on load
+    window.__CFG.links = (window.__CFG.links || []).map(x => ({
+      ...x,
+      id: x.id || uid(),
+      name: (x.name || "").trim() || "Untitled",
+      subtitle: (x.subtitle || "").trim(),
+      url: normalizeUrl(x.url || "")
+    })).filter(x => x.url);
+
+    // ensure basics exist
+    window.__CFG.genres = window.__CFG.genres || DEFAULT_CONFIG.genres.slice();
+    window.__CFG.page = window.__CFG.page || deepClone(DEFAULT_CONFIG.page);
+    window.__CFG.background = window.__CFG.background || deepClone(DEFAULT_CONFIG.background);
+    window.__CFG.jokes = window.__CFG.jokes || deepClone(DEFAULT_CONFIG.jokes);
+
+    saveConfig(window.__CFG);
+
+    if (isAdmin){
+      setAdminMode(true);
+      renderAdmin(window.__CFG);
+      wireAdminInputs(window.__CFG);
+    } else {
+      setAdminMode(false);
+      renderPublic(window.__CFG);
+    }
   </script>
 </body>
 </html>
