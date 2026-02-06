@@ -696,11 +696,13 @@
     }
 
     function getLogoSrc(cfg){
-      const L = cfg.page.logo;
-      if (!L || !L.enabled) return "";
-      if (L.dataUrl && L.dataUrl.startsWith("data:image")) return L.dataUrl;
-      return (L.url || "").trim();
-    }
+  const L = cfg.page.logo;
+  if (!L || !L.enabled) return "";
+  if (L.dataUrl && L.dataUrl.startsWith("data:image")) return L.dataUrl;
+
+  const url = (L.url || "").trim();
+  return url || "logo.png";
+}
 
     function applyLogoToPublic(cfg){
       const img = document.getElementById("pageLogo");
