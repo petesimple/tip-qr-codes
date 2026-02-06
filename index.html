@@ -87,6 +87,21 @@
       font-size:14px;
     }
 
+    .logoWrap{
+      display:flex;
+      justify-content:center;
+      margin: 10px auto 8px;
+      max-width: 980px;
+      padding: 0 18px;
+    }
+    #pageLogo{
+      max-width: min(520px, 92vw);
+      height: auto;
+      display: none;
+      filter: drop-shadow(0 14px 30px rgba(0,0,0,.45));
+      border-radius: 14px;
+    }
+
     .wrap{
       max-width: 980px;
       margin: 0 auto;
@@ -385,6 +400,7 @@
       }
       .link a { font-size: 14px; }
       button { width: 100%; padding: 12px; font-size: 14px; }
+      #pageLogo{ max-width: 92vw; }
     }
   </style>
 </head>
@@ -394,6 +410,11 @@
   <header id="publicHeader">
     <h1 id="pageTitle">Tip Petesimple - QR Codes</h1>
     <p id="pageSubtitle" class="sub">Scan a code, send a tip, keep the music moving.</p>
+
+    <div class="logoWrap">
+      <img id="pageLogo" alt="Artist logo" />
+    </div>
+
     <p id="tipJoke" class="sub tip-joke"></p>
   </header>
 
@@ -434,6 +455,41 @@
         <div class="field">
           <label>Page Subtitle</label>
           <input id="inSubtitle" type="text" />
+        </div>
+
+        <h2 style="margin-top:16px;">Logo</h2>
+
+        <div class="row2">
+          <div class="field">
+            <label>Show Logo</label>
+            <select id="inLogoOn">
+              <option value="on">On</option>
+              <option value="off">Off</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Logo Max Width (px)</label>
+            <input id="inLogoMaxW" type="number" min="120" max="900" step="10" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Logo URL (optional, ex: logo.png)</label>
+          <input id="inLogoUrl" type="text" placeholder="logo.png or https://..." />
+          <div class="mutedNote">If you upload a logo, that overrides the URL.</div>
+        </div>
+
+        <div class="field">
+          <label>Upload Logo (PNG or JPG)</label>
+          <input id="inLogoFile" type="file" accept="image/*" />
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+            <button id="btnLogoClear" class="danger">Remove Uploaded Logo</button>
+          </div>
+          <div class="mutedNote">
+            Note: uploads are saved in your config as a data URL. That is great for local use and export/import.
+            If you share a config link and the logo is huge, the link can get very long. A logo URL like "logo.png" stays small.
+          </div>
         </div>
 
         <h2 style="margin-top:16px;">Background</h2>
@@ -484,7 +540,7 @@
           <label>Joke Lines (one per line) - edit freely</label>
           <textarea id="inJokeLines"></textarea>
           <div class="mutedNote">
-            These are your “specials.” The normal jokes are automatically built, but you can also just make these the whole show by setting Special Chance to 1.
+            These are note specials. The normal jokes are automatically built, but you can also just make these the whole show by setting Special Chance to 1.
           </div>
         </div>
 
@@ -493,7 +549,7 @@
           <button id="btnAdd">Add New Link</button>
           <button id="btnExport">Export Config JSON</button>
           <button id="btnImport">Import Config JSON</button>
-          <button id="btnCopyConfigLink">Copy “Share Config” Link</button>
+          <button id="btnCopyConfigLink">Copy Share Config Link</button>
         </div>
 
         <div id="list" class="list"></div>
@@ -504,7 +560,7 @@
         <div class="mutedNote">
           This preview updates as you type. Public view is what fans see.
           <br><br>
-          Tip: give another act a config link or export JSON - they can import and instantly have their own setup.
+          Tip: give another act a config link or export JSON. They can import and instantly have their own setup.
         </div>
 
         <div style="height:12px"></div>
@@ -527,7 +583,7 @@
           Public URLs:
           <br>- <span class="small">Admin:</span> add <b>?admin=1</b>
           <br>- <span class="small">Public:</span> normal page
-          <br>- <span class="small">Share config:</span> “Copy Share Config Link” bakes settings into the URL hash
+          <br>- <span class="small">Share config:</span> Copy Share Config Link bakes settings into the URL hash
         </div>
       </div>
     </div>
@@ -546,6 +602,14 @@
         title: "Tip Petesimple - QR Codes",
         subtitle: "Scan a code, send a tip, keep the music moving.",
         genre: "Folk Rock",
+        logo: {
+          enabled: true,
+          // Put your generated logo in the repo root as "logo.png" for the default.
+          url: "logo.png",
+          // If an artist uploads a logo in admin, we store it here as a data URL.
+          dataUrl: "",
+          maxWidth: 520
+        }
       },
       background: {
         rainbow: true,
@@ -561,7 +625,7 @@
           "Tip jar challenge: donate one dollar per time you have said 'one more song.'",
           "Warning: tipping may cause spontaneous dancing and better decision making.",
           "This is a tip jar. Not a suggestion jar. Please do not tip me life advice.",
-          "Tips go directly to the 'keep doing this' fund. It is dangerously low.",
+          "Tips go directly to the keep doing this fund. It is dangerously low.",
           "Tip now and I will emotionally support your karaoke career.",
           "If you do not tip, the guitar gets it. The guitar has expensive taste.",
           "Tip jar status: accepting money, compliments, and mildly heroic legends about me.",
@@ -572,10 +636,10 @@
         "Folk Rock","Rock","Indie","Country","Jazz","Blues","Hip Hop","EDM","Metal","Pop","Reggae","Singer Songwriter"
       ],
       links: [
-        { id: "venmo",   name: "Venmo",     subtitle: "@petesimple", url: "https://venmo.com/u/petesimple" },
-        { id: "cashapp", name: "Cash App",  subtitle: "$petesimple", url: "https://cash.app/$petesimple" },
-        { id: "paypal",  name: "PayPal",    subtitle: "paypal.me/PeteLippincott", url: "https://paypal.me/PeteLippincott" },
-        { id: "apple",   name: "Apple Music", subtitle: "buy a song or album!", url: "https://music.apple.com/us/artist/petesimple/253020124" }
+        { id: "venmo",   name: "Venmo",       subtitle: "@petesimple",              url: "https://venmo.com/u/petesimple" },
+        { id: "cashapp", name: "Cash App",    subtitle: "$petesimple",              url: "https://cash.app/$petesimple" },
+        { id: "paypal",  name: "PayPal",      subtitle: "paypal.me/PeteLippincott", url: "https://paypal.me/PeteLippincott" },
+        { id: "apple",   name: "Apple Music", subtitle: "buy a song or album!",     url: "https://music.apple.com/us/artist/petesimple/253020124" }
       ]
     };
 
@@ -585,6 +649,7 @@
     // Helpers
     // ----------------------------
     const $ = (id) => document.getElementById(id);
+
     function uid(){
       return "id_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16);
     }
@@ -611,14 +676,49 @@
     function normalizeUrl(u){
       const s = (u || "").trim();
       if (!s) return "";
-      // allow mailto:, https:, http:
       if (/^(https?:|mailto:)/i.test(s)) return s;
-      // common: paypal.me/...
       if (/^[\w.-]+\.[a-z]{2,}\/?/i.test(s)) return "https://" + s;
       return s;
     }
 
     function deepClone(obj){ return JSON.parse(JSON.stringify(obj)); }
+
+    // ----------------------------
+    // Logo helpers
+    // ----------------------------
+    function ensureLogo(cfg){
+      cfg.page = cfg.page || {};
+      cfg.page.logo = cfg.page.logo || {};
+      if (typeof cfg.page.logo.enabled !== "boolean") cfg.page.logo.enabled = true;
+      cfg.page.logo.url = (cfg.page.logo.url || "logo.png").trim();
+      cfg.page.logo.dataUrl = cfg.page.logo.dataUrl || "";
+      cfg.page.logo.maxWidth = clamp(+cfg.page.logo.maxWidth || 520, 120, 900);
+    }
+
+    function getLogoSrc(cfg){
+      const L = cfg.page.logo;
+      if (!L || !L.enabled) return "";
+      if (L.dataUrl && L.dataUrl.startsWith("data:image")) return L.dataUrl;
+      return (L.url || "").trim();
+    }
+
+    function applyLogoToPublic(cfg){
+      const img = document.getElementById("pageLogo");
+      if (!img) return;
+
+      ensureLogo(cfg);
+
+      const src = getLogoSrc(cfg);
+      if (!cfg.page.logo.enabled || !src){
+        img.style.display = "none";
+        img.removeAttribute("src");
+        return;
+      }
+
+      img.src = src;
+      img.style.display = "";
+      img.style.maxWidth = `${cfg.page.logo.maxWidth}px`;
+    }
 
     // ----------------------------
     // Config load order:
@@ -645,7 +745,6 @@
     // Shareable config link via hash
     // ----------------------------
     function writeConfigToHash(cfg){
-      // compress-lite: base64 of json (good enough for our use)
       const json = JSON.stringify(cfg);
       const b64 = btoa(unescape(encodeURIComponent(json)));
       location.hash = "cfg=" + b64;
@@ -751,12 +850,12 @@
     function buildTipJokeEngine(cfg){
       const genre = (cfg.page.genre || "Music").trim();
 
-      // these are the “constructed” jokes
       const openers = [
         "Tip jar fact","Breaking news","Hot tip","Science update","Guitar report",
         "Band meeting minutes","Merch table memo","This just in","Official statement",
         "Public service announcement","Weather forecast","Totally legal disclaimer"
       ];
+
       const middles = [
         `this ${genre.toLowerCase()} set runs on`,
         `this ${genre.toLowerCase()} groove is powered by`,
@@ -771,6 +870,7 @@
         "the soundcheck is paid for with",
         "my rent is gently encouraged by"
       ];
+
       const closers = [
         "tips and positive energy.",
         "tips only. energy optional.",
@@ -807,6 +907,9 @@
 
       $("pageTitle").textContent = cfg.page.title || "Tip QR Codes";
       $("pageSubtitle").textContent = cfg.page.subtitle || "";
+
+      applyLogoToPublic(cfg);
+
       const jokeEl = $("tipJoke");
 
       // cards
@@ -950,7 +1053,6 @@
         onInput(inp.value);
         saveConfig(window.__CFG);
         renderPreview(window.__CFG);
-        renderPublicMirrorIfWanted(window.__CFG);
       });
       wrap.appendChild(lab);
       wrap.appendChild(inp);
@@ -979,10 +1081,18 @@
     function renderAdmin(cfg){
       applyTheme(cfg);
 
+      // ensure logo exists
+      ensureLogo(cfg);
+
       $("inTitle").value = cfg.page.title || "";
       $("inSubtitle").value = cfg.page.subtitle || "";
       populateGenreSelect(cfg);
       $("inGenre").value = cfg.page.genre || (cfg.genres?.[0] || "Music");
+
+      // logo
+      $("inLogoOn").value = cfg.page.logo.enabled ? "on" : "off";
+      $("inLogoMaxW").value = String(cfg.page.logo.maxWidth || 520);
+      $("inLogoUrl").value = cfg.page.logo.url || "";
 
       $("inRainbow").value = cfg.background.rainbow ? "on" : "off";
       $("inTheme").value = cfg.background.theme || "neon";
@@ -1006,14 +1116,55 @@
         saveConfig(cfg);
         renderPreview(cfg);
       });
+
       $("inSubtitle").addEventListener("input", (e) => {
         cfg.page.subtitle = e.target.value;
         saveConfig(cfg);
         renderPreview(cfg);
       });
+
       $("inGenre").addEventListener("change", (e) => {
         cfg.page.genre = e.target.value;
         saveConfig(cfg);
+      });
+
+      // logo wiring
+      $("inLogoOn").addEventListener("change", (e) => {
+        ensureLogo(cfg);
+        cfg.page.logo.enabled = e.target.value === "on";
+        saveConfig(cfg);
+      });
+
+      $("inLogoMaxW").addEventListener("input", (e) => {
+        ensureLogo(cfg);
+        cfg.page.logo.maxWidth = clamp(+e.target.value || 520, 120, 900);
+        saveConfig(cfg);
+      });
+
+      $("inLogoUrl").addEventListener("input", (e) => {
+        ensureLogo(cfg);
+        cfg.page.logo.url = (e.target.value || "").trim();
+        saveConfig(cfg);
+      });
+
+      $("inLogoFile").addEventListener("change", (e) => {
+        ensureLogo(cfg);
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = () => {
+          cfg.page.logo.dataUrl = String(reader.result || "");
+          saveConfig(cfg);
+        };
+        reader.readAsDataURL(file);
+      });
+
+      $("btnLogoClear").addEventListener("click", () => {
+        ensureLogo(cfg);
+        cfg.page.logo.dataUrl = "";
+        saveConfig(cfg);
+        $("inLogoFile").value = "";
       });
 
       $("inRainbow").addEventListener("change", (e) => {
@@ -1021,11 +1172,13 @@
         saveConfig(cfg);
         applyTheme(cfg);
       });
+
       $("inTheme").addEventListener("change", (e) => {
         cfg.background.theme = e.target.value;
         saveConfig(cfg);
         applyTheme(cfg);
       });
+
       $("inRainbowOpacity").addEventListener("input", (e) => {
         cfg.background.rainbowOpacity = clamp(+e.target.value || 0.55, 0, 1);
         saveConfig(cfg);
@@ -1037,14 +1190,17 @@
         saveConfig(cfg);
         renderPreview(cfg);
       });
+
       $("inJokeEvery").addEventListener("input", (e) => {
         cfg.jokes.everySeconds = clamp(+e.target.value || 20, 5, 120);
         saveConfig(cfg);
       });
+
       $("inSpecialChance").addEventListener("input", (e) => {
         cfg.jokes.specialChance = clamp(+e.target.value || 0.3, 0, 1);
         saveConfig(cfg);
       });
+
       $("inJokeLines").addEventListener("input", (e) => {
         cfg.jokes.specialLines = e.target.value.split("\n").map(s => s.trim()).filter(Boolean);
         saveConfig(cfg);
@@ -1071,12 +1227,17 @@
           return;
         }
         window.__CFG = parsed;
+        // ensure logo fields exist
+        window.__CFG.page = window.__CFG.page || {};
+        ensureLogo(window.__CFG);
+
         saveConfig(window.__CFG);
         clearHashConfig();
         renderAdmin(window.__CFG);
       });
 
       $("btnCopyConfigLink").addEventListener("click", async () => {
+        // bake current config into hash, including logo if uploaded
         writeConfigToHash(cfg);
         const url = location.origin + location.pathname + "?admin=1" + location.hash;
         await copyToClipboard(url);
@@ -1084,7 +1245,6 @@
       });
 
       $("btnCopyPublicLink").addEventListener("click", async () => {
-        // public link should include cfg hash too if present (so other acts can share a single public link)
         const base = location.origin + location.pathname;
         const url = base + (location.hash || "");
         await copyToClipboard(url);
@@ -1092,7 +1252,6 @@
       });
 
       $("btnViewPublic").addEventListener("click", () => {
-        // open public in same tab, keep config in hash if present
         const base = location.origin + location.pathname + (location.hash || "");
         location.href = base;
       });
@@ -1112,12 +1271,6 @@
         $("btnTestCopy").textContent = "Copied!";
         setTimeout(() => $("btnTestCopy").textContent = "Copy link", 900);
       });
-    }
-
-    // When editing in admin, it’s nice to see actual public render quickly (optional)
-    function renderPublicMirrorIfWanted(cfg){
-      // no-op, but left here if you later want a small embedded preview
-      return;
     }
 
     // ----------------------------
@@ -1142,6 +1295,7 @@
     window.__CFG.page = window.__CFG.page || deepClone(DEFAULT_CONFIG.page);
     window.__CFG.background = window.__CFG.background || deepClone(DEFAULT_CONFIG.background);
     window.__CFG.jokes = window.__CFG.jokes || deepClone(DEFAULT_CONFIG.jokes);
+    ensureLogo(window.__CFG);
 
     saveConfig(window.__CFG);
 
