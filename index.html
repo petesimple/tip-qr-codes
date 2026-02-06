@@ -74,6 +74,26 @@
       padding: 28px 18px 10px;
       text-align:center;
     }
+
+    /* Logo */
+    .logoWrap{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      margin: 0 auto 10px;
+    }
+    .logoImg{
+      width: 132px;
+      height: auto;
+      max-width: 70vw;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.18);
+      box-shadow: 0 16px 44px rgba(0,0,0,.45);
+      padding: 10px;
+      display:none;
+    }
+
     h1{
       margin:0;
       font-size: 28px;
@@ -85,21 +105,6 @@
       color:var(--muted);
       line-height:1.45;
       font-size:14px;
-    }
-
-    .logoWrap{
-      display:flex;
-      justify-content:center;
-      margin: 10px auto 8px;
-      max-width: 980px;
-      padding: 0 18px;
-    }
-    #pageLogo{
-      max-width: min(520px, 92vw);
-      height: auto;
-      display: none;
-      filter: drop-shadow(0 14px 30px rgba(0,0,0,.45));
-      border-radius: 14px;
     }
 
     .wrap{
@@ -371,6 +376,24 @@
       opacity: .95;
     }
 
+    /* Admin logo preview */
+    .logoAdminRow{
+      display:flex;
+      gap: 10px;
+      align-items:center;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .logoPreview{
+      width: 88px;
+      height: 88px;
+      object-fit: contain;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.18);
+      padding: 8px;
+    }
+
     @media (max-width: 900px) {
       .adminGrid{ grid-template-columns: 1fr; }
       .qr { width: 132px; height: 132px; }
@@ -400,7 +423,7 @@
       }
       .link a { font-size: 14px; }
       button { width: 100%; padding: 12px; font-size: 14px; }
-      #pageLogo{ max-width: 92vw; }
+      .logoImg{ width: 150px; }
     }
   </style>
 </head>
@@ -408,13 +431,11 @@
 <body>
   <!-- PUBLIC VIEW -->
   <header id="publicHeader">
+    <div class="logoWrap">
+      <img id="pageLogo" class="logoImg" alt="Logo" />
+    </div>
     <h1 id="pageTitle">Tip Petesimple - QR Codes</h1>
     <p id="pageSubtitle" class="sub">Scan a code, send a tip, keep the music moving.</p>
-
-    <div class="logoWrap">
-      <img id="pageLogo" alt="Artist logo" />
-    </div>
-
     <p id="tipJoke" class="sub tip-joke"></p>
   </header>
 
@@ -458,7 +479,6 @@
         </div>
 
         <h2 style="margin-top:16px;">Logo</h2>
-
         <div class="row2">
           <div class="field">
             <label>Show Logo</label>
@@ -467,29 +487,31 @@
               <option value="off">Off</option>
             </select>
           </div>
-
           <div class="field">
-            <label>Logo Max Width (px)</label>
-            <input id="inLogoMaxW" type="number" min="120" max="900" step="10" />
+            <label>Logo Mode</label>
+            <select id="inLogoMode">
+              <option value="default">Default (logo.png)</option>
+              <option value="url">URL</option>
+              <option value="upload">Upload (saved in config)</option>
+            </select>
           </div>
         </div>
 
-        <div class="field">
-          <label>Logo URL (optional, ex: logo.png)</label>
-          <input id="inLogoUrl" type="text" placeholder="logo.png or https://..." />
-          <div class="mutedNote">If you upload a logo, that overrides the URL.</div>
+        <div class="field" id="logoUrlField">
+          <label>Logo URL</label>
+          <input id="inLogoUrl" type="text" placeholder="https://example.com/logo.png or ./logo.png" />
+          <div class="mutedNote">Tip: keep it square-ish. PNG with transparent background looks awesome.</div>
         </div>
 
-        <div class="field">
-          <label>Upload Logo (PNG or JPG)</label>
+        <div class="field" id="logoUploadField">
+          <label>Upload Logo</label>
           <input id="inLogoFile" type="file" accept="image/*" />
-          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
-            <button id="btnLogoClear" class="danger">Remove Uploaded Logo</button>
-          </div>
-          <div class="mutedNote">
-            Note: uploads are saved in your config as a data URL. That is great for local use and export/import.
-            If you share a config link and the logo is huge, the link can get very long. A logo URL like "logo.png" stays small.
-          </div>
+          <div class="mutedNote">This stores the image inside the config so it works even if the artist does not commit files.</div>
+        </div>
+
+        <div class="logoAdminRow">
+          <img id="logoPreview" class="logoPreview" alt="Logo preview" />
+          <button id="btnLogoClear" class="danger">Clear Uploaded Logo</button>
         </div>
 
         <h2 style="margin-top:16px;">Background</h2>
@@ -530,783 +552,4 @@
             <label>Rotate Every (seconds)</label>
             <input id="inJokeEvery" type="number" min="5" step="1" />
           </div>
-          <div class="field">
-            <label>Special Chance (0 to 1)</label>
-            <input id="inSpecialChance" type="number" min="0" max="1" step="0.05" />
-          </div>
-        </div>
-
-        <div class="field">
-          <label>Joke Lines (one per line) - edit freely</label>
-          <textarea id="inJokeLines"></textarea>
-          <div class="mutedNote">
-            These are note specials. The normal jokes are automatically built, but you can also just make these the whole show by setting Special Chance to 1.
-          </div>
-        </div>
-
-        <h2 style="margin-top:16px;">Links (QR Cards)</h2>
-        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <button id="btnAdd">Add New Link</button>
-          <button id="btnExport">Export Config JSON</button>
-          <button id="btnImport">Import Config JSON</button>
-          <button id="btnCopyConfigLink">Copy Share Config Link</button>
-        </div>
-
-        <div id="list" class="list"></div>
-      </div>
-
-      <div class="panel">
-        <h2>Live Preview</h2>
-        <div class="mutedNote">
-          This preview updates as you type. Public view is what fans see.
-          <br><br>
-          Tip: give another act a config link or export JSON. They can import and instantly have their own setup.
-        </div>
-
-        <div style="height:12px"></div>
-        <div class="card">
-          <div class="row">
-            <div class="info">
-              <h2 class="title" id="prevTitle">Example Card</h2>
-              <p class="hint" id="prevSub">subtitle</p>
-            </div>
-            <div class="qr" id="prevQR"></div>
-          </div>
-          <div class="link">
-            <a id="prevLink" href="#" target="_blank" rel="noopener noreferrer">https://example.com</a>
-            <button id="btnTestCopy">Copy link</button>
-          </div>
-        </div>
-
-        <div style="height:14px"></div>
-        <div class="mutedNote">
-          Public URLs:
-          <br>- <span class="small">Admin:</span> add <b>?admin=1</b>
-          <br>- <span class="small">Public:</span> normal page
-          <br>- <span class="small">Share config:</span> Copy Share Config Link bakes settings into the URL hash
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- QR Code library (client-side) -->
-  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
-
-  <script>
-    // ----------------------------
-    // DEFAULT (Petesimple example)
-    // ----------------------------
-    const DEFAULT_CONFIG = {
-      version: 1,
-      page: {
-        title: "Tip Petesimple - QR Codes",
-        subtitle: "Scan a code, send a tip, keep the music moving.",
-        genre: "Folk Rock",
-        logo: {
-          enabled: true,
-          // Put your generated logo in the repo root as "logo.png" for the default.
-          url: "logo.png",
-          // If an artist uploads a logo in admin, we store it here as a data URL.
-          dataUrl: "",
-          maxWidth: 520
-        }
-      },
-      background: {
-        rainbow: true,
-        rainbowOpacity: 0.55,
-        theme: "neon" // neon | midnight | sunset | ice | mono
-      },
-      jokes: {
-        enabled: true,
-        everySeconds: 20,
-        specialChance: 0.30,
-        specialLines: [
-          "If you tip, I will pretend my life is organized for 3 full seconds.",
-          "Tip jar challenge: donate one dollar per time you have said 'one more song.'",
-          "Warning: tipping may cause spontaneous dancing and better decision making.",
-          "This is a tip jar. Not a suggestion jar. Please do not tip me life advice.",
-          "Tips go directly to the keep doing this fund. It is dangerously low.",
-          "Tip now and I will emotionally support your karaoke career.",
-          "If you do not tip, the guitar gets it. The guitar has expensive taste.",
-          "Tip jar status: accepting money, compliments, and mildly heroic legends about me.",
-          "Every tip adds +1 to my luck stat for the rest of the night."
-        ]
-      },
-      genres: [
-        "Folk Rock","Rock","Indie","Country","Jazz","Blues","Hip Hop","EDM","Metal","Pop","Reggae","Singer Songwriter"
-      ],
-      links: [
-        { id: "venmo",   name: "Venmo",       subtitle: "@petesimple",              url: "https://venmo.com/u/petesimple" },
-        { id: "cashapp", name: "Cash App",    subtitle: "$petesimple",              url: "https://cash.app/$petesimple" },
-        { id: "paypal",  name: "PayPal",      subtitle: "paypal.me/PeteLippincott", url: "https://paypal.me/PeteLippincott" },
-        { id: "apple",   name: "Apple Music", subtitle: "buy a song or album!",     url: "https://music.apple.com/us/artist/petesimple/253020124" }
-      ]
-    };
-
-    const STORAGE_KEY = "tipqr_admin_config_v1";
-
-    // ----------------------------
-    // Helpers
-    // ----------------------------
-    const $ = (id) => document.getElementById(id);
-
-    function uid(){
-      return "id_" + Math.random().toString(16).slice(2) + "_" + Date.now().toString(16);
-    }
-    function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
-    function pick(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
-
-    function safeJSONParse(str){
-      try { return JSON.parse(str); } catch { return null; }
-    }
-
-    function copyToClipboard(text) {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        return navigator.clipboard.writeText(text);
-      }
-      const ta = document.createElement("textarea");
-      ta.value = text;
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand("copy");
-      ta.remove();
-      return Promise.resolve();
-    }
-
-    function normalizeUrl(u){
-      const s = (u || "").trim();
-      if (!s) return "";
-      if (/^(https?:|mailto:)/i.test(s)) return s;
-      if (/^[\w.-]+\.[a-z]{2,}\/?/i.test(s)) return "https://" + s;
-      return s;
-    }
-
-    function deepClone(obj){ return JSON.parse(JSON.stringify(obj)); }
-
-    // ----------------------------
-    // Logo helpers
-    // ----------------------------
-    function ensureLogo(cfg){
-      cfg.page = cfg.page || {};
-      cfg.page.logo = cfg.page.logo || {};
-      if (typeof cfg.page.logo.enabled !== "boolean") cfg.page.logo.enabled = true;
-      cfg.page.logo.url = (cfg.page.logo.url || "logo.png").trim();
-      cfg.page.logo.dataUrl = cfg.page.logo.dataUrl || "";
-      cfg.page.logo.maxWidth = clamp(+cfg.page.logo.maxWidth || 520, 120, 900);
-    }
-
-    function getLogoSrc(cfg){
-      const L = cfg.page.logo;
-      if (!L || !L.enabled) return "";
-      if (L.dataUrl && L.dataUrl.startsWith("data:image")) return L.dataUrl;
-      return (L.url || "").trim();
-    }
-
-    function applyLogoToPublic(cfg){
-      const img = document.getElementById("pageLogo");
-      if (!img) return;
-
-      ensureLogo(cfg);
-
-      const src = getLogoSrc(cfg);
-      if (!cfg.page.logo.enabled || !src){
-        img.style.display = "none";
-        img.removeAttribute("src");
-        return;
-      }
-
-      img.src = src;
-      img.style.display = "";
-      img.style.maxWidth = `${cfg.page.logo.maxWidth}px`;
-    }
-
-    // ----------------------------
-    // Config load order:
-    // 1) URL hash cfg
-    // 2) localStorage
-    // 3) DEFAULT
-    // ----------------------------
-    function loadConfig(){
-      const fromHash = readConfigFromHash();
-      if (fromHash) return fromHash;
-
-      const raw = localStorage.getItem(STORAGE_KEY);
-      const parsed = raw ? safeJSONParse(raw) : null;
-      if (parsed && parsed.links && parsed.page) return parsed;
-
-      return deepClone(DEFAULT_CONFIG);
-    }
-
-    function saveConfig(cfg){
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(cfg)); } catch(e){}
-    }
-
-    // ----------------------------
-    // Shareable config link via hash
-    // ----------------------------
-    function writeConfigToHash(cfg){
-      const json = JSON.stringify(cfg);
-      const b64 = btoa(unescape(encodeURIComponent(json)));
-      location.hash = "cfg=" + b64;
-    }
-
-    function readConfigFromHash(){
-      const h = (location.hash || "").replace(/^#/, "");
-      if (!h.startsWith("cfg=")) return null;
-      const b64 = h.slice(4);
-      try{
-        const json = decodeURIComponent(escape(atob(b64)));
-        const parsed = safeJSONParse(json);
-        if (parsed && parsed.links && parsed.page) return parsed;
-      }catch(e){}
-      return null;
-    }
-
-    function clearHashConfig(){
-      if ((location.hash || "").startsWith("#cfg=")){
-        history.replaceState(null, "", location.pathname + location.search);
-      }
-    }
-
-    // ----------------------------
-    // Background themes
-    // ----------------------------
-    function applyTheme(cfg){
-      document.documentElement.style.setProperty("--rainbowOn", cfg.background.rainbow ? "1" : "0");
-      document.documentElement.style.setProperty("--rainbowOpacity", String(clamp(+cfg.background.rainbowOpacity || 0.55, 0, 1)));
-
-      const theme = cfg.background.theme || "neon";
-      const themes = {
-        neon:    { a:"rgba(120,120,255,.10)", b:"rgba(255,120,200,.08)" },
-        midnight:{ a:"rgba(80,140,255,.08)",  b:"rgba(0,255,200,.06)" },
-        sunset:  { a:"rgba(255,140,60,.10)",  b:"rgba(255,40,120,.08)" },
-        ice:     { a:"rgba(120,255,255,.08)", b:"rgba(160,180,255,.08)" },
-        mono:    { a:"rgba(255,255,255,.06)", b:"rgba(255,255,255,.04)" }
-      };
-      const t = themes[theme] || themes.neon;
-      document.documentElement.style.setProperty("--accentA", t.a);
-      document.documentElement.style.setProperty("--accentB", t.b);
-    }
-
-    // ----------------------------
-    // Public render
-    // ----------------------------
-    const grid = $("grid");
-    let jokeTimer = null;
-
-    function el(tag, props = {}, children = []) {
-      const node = document.createElement(tag);
-      Object.entries(props).forEach(([k, v]) => {
-        if (k === "class") node.className = v;
-        else if (k === "html") node.innerHTML = v;
-        else node.setAttribute(k, v);
-      });
-      children.forEach(c => node.appendChild(c));
-      return node;
-    }
-
-    function buildCard(entry) {
-      const qrBox = el("div", { class: "qr", id: `qr-${entry.id}` });
-
-      const left = el("div", { class: "info" }, [
-        el("h2", { class: "title" }, []),
-        el("p", { class: "hint" }, [])
-      ]);
-      left.querySelector(".title").textContent = entry.name || "Untitled";
-      left.querySelector(".hint").textContent = entry.subtitle || "";
-
-      const topRow = el("div", { class: "row" }, [left, qrBox]);
-
-      const linkA = el("a", { href: entry.url, target: "_blank", rel: "noopener noreferrer" });
-      linkA.textContent = entry.url;
-
-      const btnCopy = el("button");
-      btnCopy.textContent = "Copy link";
-      btnCopy.addEventListener("click", async () => {
-        await copyToClipboard(entry.url);
-        btnCopy.textContent = "Copied!";
-        setTimeout(() => (btnCopy.textContent = "Copy link"), 900);
-      });
-
-      const bottom = el("div", { class: "link" }, [linkA, btnCopy]);
-      const card = el("div", { class: "card" }, [topRow, bottom]);
-
-      setTimeout(() => {
-        const size = 120;
-        const target = document.getElementById(`qr-${entry.id}`);
-        if (!target) return;
-        target.innerHTML = "";
-        new QRCode(target, {
-          text: entry.url,
-          width: size,
-          height: size,
-          correctLevel: QRCode.CorrectLevel.M
-        });
-      }, 0);
-
-      return card;
-    }
-
-    function buildTipJokeEngine(cfg){
-      const genre = (cfg.page.genre || "Music").trim();
-
-      const openers = [
-        "Tip jar fact","Breaking news","Hot tip","Science update","Guitar report",
-        "Band meeting minutes","Merch table memo","This just in","Official statement",
-        "Public service announcement","Weather forecast","Totally legal disclaimer"
-      ];
-
-      const middles = [
-        `this ${genre.toLowerCase()} set runs on`,
-        `this ${genre.toLowerCase()} groove is powered by`,
-        "these guitars are sponsored by",
-        "my strings are held together with",
-        "the drummer accepts payment in",
-        "the bassist demands tribute via",
-        "the amp gods require",
-        "the set list is fueled by",
-        "the encore is unlocked by",
-        "this vibe survives thanks to",
-        "the soundcheck is paid for with",
-        "my rent is gently encouraged by"
-      ];
-
-      const closers = [
-        "tips and positive energy.",
-        "tips only. energy optional.",
-        "tips. preferably the money kind.",
-        "tips. I promise to spend them responsibly on irresponsible things.",
-        "tips. I will not buy more pedals. (I will.)",
-        "tips. no refunds, only riffs.",
-        "tips. your generosity is my favorite instrument.",
-        "tips. scan now, regret nothing."
-      ];
-
-      const specials = (cfg.jokes.specialLines || []).map(s => s.trim()).filter(Boolean);
-      const specialChance = clamp(+cfg.jokes.specialChance || 0.3, 0, 1);
-
-      function buildOne(){
-        const useSpecial = cfg.jokes.enabled && specials.length && (Math.random() < specialChance);
-        if (useSpecial) return pick(specials);
-        return `${pick(openers)}: ${pick(middles)} ${pick(closers)}`;
-      }
-
-      function nextDifferent(last){
-        for (let i=0;i<8;i++){
-          const j = buildOne();
-          if (j !== last) return j;
-        }
-        return buildOne();
-      }
-
-      return { nextDifferent };
-    }
-
-    function renderPublic(cfg){
-      applyTheme(cfg);
-
-      $("pageTitle").textContent = cfg.page.title || "Tip QR Codes";
-      $("pageSubtitle").textContent = cfg.page.subtitle || "";
-
-      applyLogoToPublic(cfg);
-
-      const jokeEl = $("tipJoke");
-
-      // cards
-      grid.innerHTML = "";
-      (cfg.links || [])
-        .filter(x => x && x.url)
-        .forEach(entry => grid.appendChild(buildCard(entry)));
-
-      // jokes
-      if (jokeTimer) clearInterval(jokeTimer);
-      jokeTimer = null;
-
-      if (!cfg.jokes.enabled){
-        jokeEl.style.display = "none";
-        return;
-      }
-      jokeEl.style.display = "";
-
-      const engine = buildTipJokeEngine(cfg);
-
-      function setJoke({animate=true}={}){
-        const last = jokeEl.textContent || "";
-        const j = engine.nextDifferent(last);
-        try { localStorage.setItem("lastTipJoke", j); } catch(e){}
-
-        if (!animate){
-          jokeEl.textContent = j;
-          return;
-        }
-        jokeEl.classList.add("fadeout");
-        setTimeout(() => {
-          jokeEl.textContent = j;
-          jokeEl.classList.remove("fadeout");
-        }, 220);
-      }
-
-      setJoke({animate:false});
-      const every = clamp(+cfg.jokes.everySeconds || 20, 5, 120);
-      jokeTimer = setInterval(() => setJoke({animate:true}), every * 1000);
-    }
-
-    // ----------------------------
-    // Admin render
-    // ----------------------------
-    function setAdminMode(on){
-      $("admin").style.display = on ? "" : "none";
-      $("publicHeader").style.display = on ? "none" : "";
-      $("publicWrap").style.display = on ? "none" : "";
-      $("publicFooter").style.display = on ? "none" : "";
-    }
-
-    function populateGenreSelect(cfg){
-      const sel = $("inGenre");
-      sel.innerHTML = "";
-      const genres = (cfg.genres || []).slice();
-      if (!genres.includes(cfg.page.genre)) genres.unshift(cfg.page.genre);
-      genres
-        .filter(Boolean)
-        .forEach(g => {
-          const opt = document.createElement("option");
-          opt.value = g;
-          opt.textContent = g;
-          sel.appendChild(opt);
-        });
-    }
-
-    function buildItemEditor(cfg, idx){
-      const entry = cfg.links[idx];
-
-      const box = document.createElement("div");
-      box.className = "item";
-
-      const top = document.createElement("div");
-      top.className = "itemTop";
-
-      const tag = document.createElement("div");
-      tag.className = "tag";
-      tag.textContent = `#${idx+1} - ${entry.name || "Untitled"}`;
-
-      const btns = document.createElement("div");
-      btns.className = "itemBtns";
-
-      const up = document.createElement("button");
-      up.textContent = "Up";
-      up.disabled = idx === 0;
-      up.addEventListener("click", () => {
-        const a = cfg.links[idx-1];
-        cfg.links[idx-1] = cfg.links[idx];
-        cfg.links[idx] = a;
-        saveConfig(cfg);
-        renderAdmin(cfg);
-      });
-
-      const down = document.createElement("button");
-      down.textContent = "Down";
-      down.disabled = idx === cfg.links.length - 1;
-      down.addEventListener("click", () => {
-        const a = cfg.links[idx+1];
-        cfg.links[idx+1] = cfg.links[idx];
-        cfg.links[idx] = a;
-        saveConfig(cfg);
-        renderAdmin(cfg);
-      });
-
-      const del = document.createElement("button");
-      del.textContent = "Delete";
-      del.className = "danger";
-      del.addEventListener("click", () => {
-        cfg.links.splice(idx,1);
-        saveConfig(cfg);
-        renderAdmin(cfg);
-      });
-
-      btns.appendChild(up);
-      btns.appendChild(down);
-      btns.appendChild(del);
-
-      top.appendChild(tag);
-      top.appendChild(btns);
-
-      const f1 = field("Name", entry.name, (v)=>{ entry.name=v; });
-      const f2 = field("Subtitle", entry.subtitle||"", (v)=>{ entry.subtitle=v; });
-      const f3 = field("URL", entry.url, (v)=>{ entry.url=normalizeUrl(v); });
-
-      box.appendChild(top);
-      box.appendChild(f1);
-      box.appendChild(f2);
-      box.appendChild(f3);
-
-      return box;
-    }
-
-    function field(labelText, value, onInput){
-      const wrap = document.createElement("div");
-      wrap.className = "field";
-      const lab = document.createElement("label");
-      lab.textContent = labelText;
-      const inp = document.createElement("input");
-      inp.value = value || "";
-      inp.addEventListener("input", () => {
-        onInput(inp.value);
-        saveConfig(window.__CFG);
-        renderPreview(window.__CFG);
-      });
-      wrap.appendChild(lab);
-      wrap.appendChild(inp);
-      return wrap;
-    }
-
-    function renderPreview(cfg){
-      const first = (cfg.links || []).find(x => x && x.url) || { name:"Example Card", subtitle:"subtitle", url:"https://example.com" };
-      $("prevTitle").textContent = first.name || "Example Card";
-      $("prevSub").textContent = first.subtitle || "";
-      $("prevLink").textContent = first.url || "";
-      $("prevLink").href = first.url || "#";
-
-      const target = $("prevQR");
-      target.innerHTML = "";
-      if (first.url){
-        new QRCode(target, {
-          text: first.url,
-          width: 120,
-          height: 120,
-          correctLevel: QRCode.CorrectLevel.M
-        });
-      }
-    }
-
-    function renderAdmin(cfg){
-      applyTheme(cfg);
-
-      // ensure logo exists
-      ensureLogo(cfg);
-
-      $("inTitle").value = cfg.page.title || "";
-      $("inSubtitle").value = cfg.page.subtitle || "";
-      populateGenreSelect(cfg);
-      $("inGenre").value = cfg.page.genre || (cfg.genres?.[0] || "Music");
-
-      // logo
-      $("inLogoOn").value = cfg.page.logo.enabled ? "on" : "off";
-      $("inLogoMaxW").value = String(cfg.page.logo.maxWidth || 520);
-      $("inLogoUrl").value = cfg.page.logo.url || "";
-
-      $("inRainbow").value = cfg.background.rainbow ? "on" : "off";
-      $("inTheme").value = cfg.background.theme || "neon";
-      $("inRainbowOpacity").value = String(clamp(+cfg.background.rainbowOpacity || 0.55, 0, 1));
-
-      $("inJokesOn").value = cfg.jokes.enabled ? "on" : "off";
-      $("inJokeEvery").value = String(clamp(+cfg.jokes.everySeconds || 20, 5, 120));
-      $("inSpecialChance").value = String(clamp(+cfg.jokes.specialChance || 0.30, 0, 1));
-      $("inJokeLines").value = (cfg.jokes.specialLines || []).join("\n");
-
-      const list = $("list");
-      list.innerHTML = "";
-      (cfg.links || []).forEach((_, idx) => list.appendChild(buildItemEditor(cfg, idx)));
-
-      renderPreview(cfg);
-    }
-
-    function wireAdminInputs(cfg){
-      $("inTitle").addEventListener("input", (e) => {
-        cfg.page.title = e.target.value;
-        saveConfig(cfg);
-        renderPreview(cfg);
-      });
-
-      $("inSubtitle").addEventListener("input", (e) => {
-        cfg.page.subtitle = e.target.value;
-        saveConfig(cfg);
-        renderPreview(cfg);
-      });
-
-      $("inGenre").addEventListener("change", (e) => {
-        cfg.page.genre = e.target.value;
-        saveConfig(cfg);
-      });
-
-      // logo wiring
-      $("inLogoOn").addEventListener("change", (e) => {
-        ensureLogo(cfg);
-        cfg.page.logo.enabled = e.target.value === "on";
-        saveConfig(cfg);
-      });
-
-      $("inLogoMaxW").addEventListener("input", (e) => {
-        ensureLogo(cfg);
-        cfg.page.logo.maxWidth = clamp(+e.target.value || 520, 120, 900);
-        saveConfig(cfg);
-      });
-
-      $("inLogoUrl").addEventListener("input", (e) => {
-        ensureLogo(cfg);
-        cfg.page.logo.url = (e.target.value || "").trim();
-        saveConfig(cfg);
-      });
-
-      $("inLogoFile").addEventListener("change", (e) => {
-        ensureLogo(cfg);
-        const file = e.target.files && e.target.files[0];
-        if (!file) return;
-
-        const reader = new FileReader();
-        reader.onload = () => {
-          cfg.page.logo.dataUrl = String(reader.result || "");
-          saveConfig(cfg);
-        };
-        reader.readAsDataURL(file);
-      });
-
-      $("btnLogoClear").addEventListener("click", () => {
-        ensureLogo(cfg);
-        cfg.page.logo.dataUrl = "";
-        saveConfig(cfg);
-        $("inLogoFile").value = "";
-      });
-
-      $("inRainbow").addEventListener("change", (e) => {
-        cfg.background.rainbow = e.target.value === "on";
-        saveConfig(cfg);
-        applyTheme(cfg);
-      });
-
-      $("inTheme").addEventListener("change", (e) => {
-        cfg.background.theme = e.target.value;
-        saveConfig(cfg);
-        applyTheme(cfg);
-      });
-
-      $("inRainbowOpacity").addEventListener("input", (e) => {
-        cfg.background.rainbowOpacity = clamp(+e.target.value || 0.55, 0, 1);
-        saveConfig(cfg);
-        applyTheme(cfg);
-      });
-
-      $("inJokesOn").addEventListener("change", (e) => {
-        cfg.jokes.enabled = e.target.value === "on";
-        saveConfig(cfg);
-        renderPreview(cfg);
-      });
-
-      $("inJokeEvery").addEventListener("input", (e) => {
-        cfg.jokes.everySeconds = clamp(+e.target.value || 20, 5, 120);
-        saveConfig(cfg);
-      });
-
-      $("inSpecialChance").addEventListener("input", (e) => {
-        cfg.jokes.specialChance = clamp(+e.target.value || 0.3, 0, 1);
-        saveConfig(cfg);
-      });
-
-      $("inJokeLines").addEventListener("input", (e) => {
-        cfg.jokes.specialLines = e.target.value.split("\n").map(s => s.trim()).filter(Boolean);
-        saveConfig(cfg);
-      });
-
-      $("btnAdd").addEventListener("click", () => {
-        cfg.links.push({ id: uid(), name: "New Link", subtitle: "what is this?", url: "https://example.com" });
-        saveConfig(cfg);
-        renderAdmin(cfg);
-      });
-
-      $("btnExport").addEventListener("click", async () => {
-        const json = JSON.stringify(cfg, null, 2);
-        await copyToClipboard(json);
-        alert("Config JSON copied to clipboard. Paste it into a file or message.");
-      });
-
-      $("btnImport").addEventListener("click", async () => {
-        const raw = prompt("Paste config JSON here:");
-        if (!raw) return;
-        const parsed = safeJSONParse(raw);
-        if (!parsed || !parsed.links || !parsed.page){
-          alert("That JSON does not look like a valid config.");
-          return;
-        }
-        window.__CFG = parsed;
-        // ensure logo fields exist
-        window.__CFG.page = window.__CFG.page || {};
-        ensureLogo(window.__CFG);
-
-        saveConfig(window.__CFG);
-        clearHashConfig();
-        renderAdmin(window.__CFG);
-      });
-
-      $("btnCopyConfigLink").addEventListener("click", async () => {
-        // bake current config into hash, including logo if uploaded
-        writeConfigToHash(cfg);
-        const url = location.origin + location.pathname + "?admin=1" + location.hash;
-        await copyToClipboard(url);
-        alert("Admin config link copied. Open it on another device to load this setup.");
-      });
-
-      $("btnCopyPublicLink").addEventListener("click", async () => {
-        const base = location.origin + location.pathname;
-        const url = base + (location.hash || "");
-        await copyToClipboard(url);
-        alert("Public link copied.");
-      });
-
-      $("btnViewPublic").addEventListener("click", () => {
-        const base = location.origin + location.pathname + (location.hash || "");
-        location.href = base;
-      });
-
-      $("btnResetDefault").addEventListener("click", () => {
-        if (!confirm("Reset everything to Petesimple default?")) return;
-        window.__CFG = deepClone(DEFAULT_CONFIG);
-        saveConfig(window.__CFG);
-        clearHashConfig();
-        renderAdmin(window.__CFG);
-      });
-
-      $("btnTestCopy").addEventListener("click", async () => {
-        const u = $("prevLink").href || "";
-        if (!u) return;
-        await copyToClipboard(u);
-        $("btnTestCopy").textContent = "Copied!";
-        setTimeout(() => $("btnTestCopy").textContent = "Copy link", 900);
-      });
-    }
-
-    // ----------------------------
-    // Boot
-    // ----------------------------
-    const params = new URLSearchParams(location.search);
-    const isAdmin = params.get("admin") === "1";
-
-    window.__CFG = loadConfig();
-
-    // normalize urls on load
-    window.__CFG.links = (window.__CFG.links || []).map(x => ({
-      ...x,
-      id: x.id || uid(),
-      name: (x.name || "").trim() || "Untitled",
-      subtitle: (x.subtitle || "").trim(),
-      url: normalizeUrl(x.url || "")
-    })).filter(x => x.url);
-
-    // ensure basics exist
-    window.__CFG.genres = window.__CFG.genres || DEFAULT_CONFIG.genres.slice();
-    window.__CFG.page = window.__CFG.page || deepClone(DEFAULT_CONFIG.page);
-    window.__CFG.background = window.__CFG.background || deepClone(DEFAULT_CONFIG.background);
-    window.__CFG.jokes = window.__CFG.jokes || deepClone(DEFAULT_CONFIG.jokes);
-    ensureLogo(window.__CFG);
-
-    saveConfig(window.__CFG);
-
-    if (isAdmin){
-      setAdminMode(true);
-      renderAdmin(window.__CFG);
-      wireAdminInputs(window.__CFG);
-    } else {
-      setAdminMode(false);
-      renderPublic(window.__CFG);
-    }
-  </script>
-</body>
-</html>
+         
