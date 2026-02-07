@@ -434,6 +434,37 @@ h1{ font-size: 22px; }
       button { width: 100%; padding: 12px; font-size: 14px; }
       #pageLogo{ max-width: 92vw; }
     }
+    /* Public footer admin gear */
+.publicFooterBar{
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 10px 18px 28px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.adminGearBtn{
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.16);
+  box-shadow: 0 10px 26px rgba(0,0,0,.35);
+  cursor: pointer;
+}
+
+.adminGearBtn:hover{ background: rgba(255,255,255,.12); }
+.adminGearBtn:active{ transform: translateY(1px); }
+
+.adminGearBtn svg{
+  width: 18px;
+  height: 18px;
+  opacity: .92;
+}
   </style>
 </head>
 
@@ -458,8 +489,18 @@ h1{ font-size: 22px; }
 
 <footer id="publicFooter">
   <div class="tiny">Built for quick scanning on phones. Works great on a tablet at the merch table too.</div>
-</footer>
 
+  <div class="publicFooterBar">
+    <button id="btnGoAdmin" class="adminGearBtn" title="Admin settings" aria-label="Admin settings">
+      <!-- simple gear icon -->
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M19.4 15a7.95 7.95 0 0 0 .1-1 7.95 7.95 0 0 0-.1-1l2-1.5-2-3.4-2.4 1a8 8 0 0 0-1.7-1l-.4-2.6H9.1l-.4 2.6a8 8 0 0 0-1.7 1l-2.4-1-2 3.4 2 1.5a7.95 7.95 0 0 0-.1 1c0 .34.03.67.1 1l-2 1.5 2 3.4 2.4-1a8 8 0 0 0 1.7 1l.4 2.6h5.8l.4-2.6a8 8 0 0 0 1.7-1l2.4 1 2-3.4-2-1.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+</footer>
+  
   <!-- ADMIN VIEW -->
   <div id="admin" class="adminShell" style="display:none;">
     <div class="adminTop">
