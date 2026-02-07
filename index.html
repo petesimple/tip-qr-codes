@@ -1381,9 +1381,19 @@ h1{ font-size: 22px; }
       renderAdmin(window.__CFG);
       wireAdminInputs(window.__CFG);
     } else {
-      setAdminMode(false);
-      renderPublic(window.__CFG);
-    }
+  setAdminMode(false);
+  renderPublic(window.__CFG);
+
+  const gear = document.getElementById("btnGoAdmin");
+  if (gear){
+    gear.addEventListener("click", () => {
+      // keep any shared config in the hash
+      const hash = location.hash || "";
+      location.href = location.pathname + "?admin=1" + hash;
+    });
+  }
+}
+    
   </script>
   <script>
   if ("serviceWorker" in navigator) {
