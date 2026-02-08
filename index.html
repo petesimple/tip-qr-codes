@@ -1290,6 +1290,12 @@ h1{ font-size: 22px; }
       renderPreview(cfg);
     }
 
+
+function getCleanShareUrl(){
+  // Always share the base public app URL
+  return location.origin + location.pathname;
+}
+    
 function getPublicUrl(){
   // includes any #cfg hash if present
   return location.origin + location.pathname + (location.hash || "");
@@ -1298,7 +1304,7 @@ function getPublicUrl(){
 function openShareModal(){
   const modal = $("shareModal");
   const qrBox = $("shareQR");
-  const link = getPublicUrl();
+  const link = getCleanShareUrl();
 
   // fill link text
   $("shareLinkText").textContent = link;
@@ -1501,7 +1507,7 @@ $("btnCloseShare")?.addEventListener("click", closeShareModal);
 $("btnCloseShare2")?.addEventListener("click", closeShareModal);
 
 $("btnCopyShareLink")?.addEventListener("click", async () => {
-  const link = getPublicUrl();
+  const link = getCleanShareUrl();
   await copyToClipboard(link);
   const b = $("btnCopyShareLink");
   if (b){
