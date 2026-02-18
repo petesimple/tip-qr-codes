@@ -1636,17 +1636,15 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeShareModal();
 });
     
-    // ----------------------------
-    // Boot
-    // ----------------------------
-    const params = new URLSearchParams(location.search);
-    // --- BOOT: replace your isAdmin line with this ---
-const params = new URLSearchParams(location.search);
-const isEmbed = params.get("embed") === "1";
-const isAdmin = !isEmbed && params.get("admin") === "1";
+ // ----------------------------
+// Boot
+// ----------------------------
+const urlParams = new URLSearchParams(location.search);
 
-    window.__CFG = loadConfig();
+const isEmbed = urlParams.get("embed") === "1";
+const isAdmin = !isEmbed && urlParams.get("admin") === "1";
 
+window.__CFG = loadConfig();
     // normalize urls on load
     window.__CFG.links = (window.__CFG.links || []).map(x => ({
       ...x,
