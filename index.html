@@ -1640,7 +1640,10 @@ document.addEventListener("keydown", (e) => {
     // Boot
     // ----------------------------
     const params = new URLSearchParams(location.search);
-    const isAdmin = params.get("admin") === "1";
+    // --- BOOT: replace your isAdmin line with this ---
+const params = new URLSearchParams(location.search);
+const isEmbed = params.get("embed") === "1";
+const isAdmin = !isEmbed && params.get("admin") === "1";
 
     window.__CFG = loadConfig();
 
