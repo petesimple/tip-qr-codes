@@ -1674,13 +1674,17 @@ const isAdmin = !isEmbed && params.get("admin") === "1";
   setAdminMode(false);
   renderPublic(window.__CFG);
 
+  // hide gear when embedded
   const gear = document.getElementById("btnGoAdmin");
   if (gear){
-    gear.addEventListener("click", () => {
-      // keep any shared config in the hash
-      const hash = location.hash || "";
-      location.href = location.pathname + "?admin=1" + hash;
-    });
+    if (isEmbed){
+      gear.style.display = "none";
+    } else {
+      gear.addEventListener("click", () => {
+        const hash = location.hash || "";
+        location.href = location.pathname + "?admin=1" + hash;
+      });
+    }
   }
 }
 
@@ -1690,7 +1694,7 @@ const isAdmin = !isEmbed && params.get("admin") === "1";
 let __embedModalInstance = null;
 
 function getBasePublicUrl(){
-  // No ?admin=1, no hash
+  // base page without query/hash
   return location.origin + location.pathname;
 }
 
@@ -1698,13 +1702,13 @@ function getEmbedUrl(){
   const useHash = !!document.getElementById("embedUseHash")?.checked;
   const forcePublic = !!document.getElementById("embedPublicMode")?.checked;
 
-  // If forcePublic, we ensure no admin param exists.
-  // (Your public view is the default when admin param is missing.)
   const base = getBasePublicUrl();
 
-  // If they want the current config, include location.hash if it's cfg=...
+  // If forcePublic is on, add ?embed=1 so the page *forces* public view
+  const qs = forcePublic ? "?embed=1" : "";
+
   const hash = useHash ? (location.hash || "") : "";
-  return base + hash;
+  return base + qs + hash;
 }
 
 function buildEmbedCode(){
