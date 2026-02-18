@@ -1666,6 +1666,7 @@ document.addEventListener("keydown", (e) => {
       setAdminMode(true);
       renderAdmin(window.__CFG);
       wireAdminInputs(window.__CFG);
+      wireEmbedUI(); // <-- add this
     } else {
   setAdminMode(false);
   renderPublic(window.__CFG);
