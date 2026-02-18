@@ -590,6 +590,7 @@ h1{ font-size: 22px; }
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
         <button id="btnViewPublic" class="ok">Open Public View</button>
         <button id="btnCopyPublicLink">Copy Public Link</button>
+        <button id="btnEmbed" class="ok">Embed (iframe)</button>
         <button id="btnShareQR" class="ok">Share QR</button>
         <button id="btnResetDefault" class="danger">Reset to Petesimple Default</button>
       </div>
@@ -747,6 +748,113 @@ h1{ font-size: 22px; }
     </div>
   </div>
 
+<!-- Embed Code Modal (Bootstrap) -->
+<div class="modal fade" id="embedModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-scrollable">
+    <div class="modal-content" style="background: rgba(20,20,34,.96); border:1px solid rgba(255,255,255,.14);">
+      <div class="modal-header" style="border-bottom:1px solid rgba(255,255,255,.12);">
+        <h5 class="modal-title fw-black" style="color: rgba(255,255,255,.95); letter-spacing:.2px;">
+          Embed this tip page (iframe)
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="container-fluid">
+          <div class="row g-3">
+            <!-- Left: options + code -->
+            <div class="col-12 col-lg-5">
+              <div class="p-3 rounded-4" style="border:1px solid rgba(255,255,255,.12); background: rgba(0,0,0,.18);">
+                <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
+                  <div class="fw-bold" style="color: rgba(255,255,255,.92);">Embed options</div>
+                  <small style="color: rgba(255,255,255,.65);">For websites / CMS builders</small>
+                </div>
+
+                <div class="mt-3">
+                  <label class="form-label fw-bold" style="color: rgba(255,255,255,.75); font-size:12px;">Embed height (px)</label>
+                  <input id="embedHeight" type="number" class="form-control"
+                         value="900" min="520" step="10"
+                         style="background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.16); color: #f3f4ff; font-weight:700; border-radius:14px;">
+                </div>
+
+                <div class="mt-3 form-check">
+                  <input id="embedUseHash" class="form-check-input" type="checkbox" checked>
+                  <label class="form-check-label" for="embedUseHash" style="color: rgba(255,255,255,.85); font-weight:700;">
+                    Include current config in URL (hash)
+                  </label>
+                  <div style="color: rgba(255,255,255,.55); font-size:12px; margin-top:6px;">
+                    If checked, the embedded page loads exactly this setup - great for sharing an artist’s config.
+                  </div>
+                </div>
+
+                <div class="mt-3 form-check">
+                  <input id="embedPublicMode" class="form-check-input" type="checkbox" checked>
+                  <label class="form-check-label" for="embedPublicMode" style="color: rgba(255,255,255,.85); font-weight:700;">
+                    Force public view (no admin)
+                  </label>
+                  <div style="color: rgba(255,255,255,.55); font-size:12px; margin-top:6px;">
+                    Keeps it fan-facing even if someone copies the embed onto a site.
+                  </div>
+                </div>
+
+                <hr style="border-color: rgba(255,255,255,.12);" class="my-3">
+
+                <label class="form-label fw-bold" style="color: rgba(255,255,255,.75); font-size:12px;">Embed code</label>
+                <textarea id="embedCode" class="form-control" rows="8" readonly
+                          style="background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.16); color: #f3f4ff; font-weight:700; border-radius:14px;"></textarea>
+
+                <div class="d-flex gap-2 flex-wrap mt-3">
+                  <button id="btnCopyEmbed" class="btn btn-light fw-bold" type="button" style="border-radius:14px;">
+                    Copy embed code
+                  </button>
+                  <a id="btnOpenEmbedUrl" class="btn btn-outline-light fw-bold" target="_blank" rel="noopener"
+                     style="border-radius:14px;">
+                    Open embed URL
+                  </a>
+                </div>
+
+                <div class="mt-3" style="color: rgba(255,255,255,.55); font-size:12px; line-height:1.35;">
+                  Tip: if a platform blocks iframes, use “Open embed URL” as a fallback button on the site.
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: live preview -->
+            <div class="col-12 col-lg-7">
+              <div class="p-3 rounded-4" style="border:1px solid rgba(255,255,255,.12); background: rgba(0,0,0,.18);">
+                <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
+                  <div class="fw-bold" style="color: rgba(255,255,255,.92);">Live preview</div>
+                  <small id="embedUrlLabel" style="color: rgba(255,255,255,.65); word-break: break-all;"></small>
+                </div>
+
+                <div class="mt-3 rounded-4 overflow-hidden"
+                     style="border:1px solid rgba(255,255,255,.12); background: rgba(255,255,255,.03);">
+                  <iframe id="embedPreview"
+                          title="Tip QR Builder Embed Preview"
+                          style="width:100%; height: 680px; border:0;"
+                          loading="lazy"
+                          allow="clipboard-write"
+                          referrerpolicy="no-referrer-when-downgrade"></iframe>
+                </div>
+
+                <div class="mt-3" style="color: rgba(255,255,255,.55); font-size:12px;">
+                  Preview uses the same URL as the embed code.
+                </div>
+              </div>
+            </div>
+          </div><!-- /row -->
+        </div><!-- /container -->
+      </div>
+
+      <div class="modal-footer" style="border-top:1px solid rgba(255,255,255,.12);">
+        <button type="button" class="btn btn-outline-light fw-bold" data-bs-dismiss="modal" style="border-radius:14px;">
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+  
   <!-- Share QR Modal -->
 <div id="shareModal" class="modalOverlay" aria-hidden="true">
   <div class="modalCard" role="dialog" aria-modal="true" aria-label="Share QR">
@@ -1579,6 +1687,99 @@ document.addEventListener("keydown", (e) => {
       navigator.serviceWorker.register("./service-worker.js").catch(()=>{});
     });
   }
+    // ----------------------------
+// Embed (iframe) admin helper
+// ----------------------------
+let __embedModalInstance = null;
+
+function getBasePublicUrl(){
+  // No ?admin=1, no hash
+  return location.origin + location.pathname;
+}
+
+function getEmbedUrl(){
+  const useHash = !!document.getElementById("embedUseHash")?.checked;
+  const forcePublic = !!document.getElementById("embedPublicMode")?.checked;
+
+  // If forcePublic, we ensure no admin param exists.
+  // (Your public view is the default when admin param is missing.)
+  const base = getBasePublicUrl();
+
+  // If they want the current config, include location.hash if it's cfg=...
+  const hash = useHash ? (location.hash || "") : "";
+  return base + hash;
+}
+
+function buildEmbedCode(){
+  const h = Math.max(520, parseInt(document.getElementById("embedHeight")?.value || "900", 10));
+  const url = getEmbedUrl();
+
+  // Clean, backend-friendly snippet. No external deps.
+  const code =
+`<iframe
+  src="${url}"
+  title="Tip QR Builder"
+  style="width:100%; height:${h}px; border:0; border-radius:16px; overflow:hidden;"
+  loading="lazy"
+  referrerpolicy="no-referrer-when-downgrade"
+  allow="clipboard-write"
+></iframe>`;
+
+  const ta = document.getElementById("embedCode");
+  if (ta) ta.value = code;
+
+  const prev = document.getElementById("embedPreview");
+  if (prev) prev.src = url;
+
+  const label = document.getElementById("embedUrlLabel");
+  if (label) label.textContent = url;
+
+  const openA = document.getElementById("btnOpenEmbedUrl");
+  if (openA) openA.href = url;
+}
+
+function openEmbedModal(){
+  // Bootstrap Modal instance
+  const el = document.getElementById("embedModal");
+  if (!el || !window.bootstrap) return;
+
+  if (!__embedModalInstance) __embedModalInstance = new bootstrap.Modal(el);
+
+  // Pre-seed height + build code
+  buildEmbedCode();
+
+  __embedModalInstance.show();
+}
+
+function wireEmbedUI(){
+  const btn = document.getElementById("btnEmbed");
+  if (btn){
+    btn.addEventListener("click", () => {
+      // If admin has a config and wants it embeddable, ensure hash exists if desired.
+      // We do NOT force-write cfg into the hash here. We just use what's currently in the URL.
+      openEmbedModal();
+    });
+  }
+
+  // Rebuild on option changes
+  ["embedHeight","embedUseHash","embedPublicMode"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener("input", buildEmbedCode);
+    if (el) el.addEventListener("change", buildEmbedCode);
+  });
+
+  // Copy embed
+  const copyBtn = document.getElementById("btnCopyEmbed");
+  if (copyBtn){
+    copyBtn.addEventListener("click", async () => {
+      const text = document.getElementById("embedCode")?.value || "";
+      if (!text) return;
+      await copyToClipboard(text);
+      copyBtn.textContent = "Copied!";
+      setTimeout(() => (copyBtn.textContent = "Copy embed code"), 900);
+    });
+  }
+}
 </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
